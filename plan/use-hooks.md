@@ -1,0 +1,1 @@
+https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks
