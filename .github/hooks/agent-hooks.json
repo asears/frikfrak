@@ -1,0 +1,77 @@
+{
+    "version": 1,
+    "hooks": {
+        "sessionStart": [
+            {
+                "type": "command",
+                "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
+                "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
+                "cwd": ".",
+                "env": {
+                    "FRIKFRAK_HOOK_TYPE": "sessionStart"
+                },
+                "timeoutSec": 10
+            }
+        ],
+        "sessionEnd": [
+            {
+                "type": "command",
+                "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
+                "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
+                "cwd": ".",
+                "env": {
+                    "FRIKFRAK_HOOK_TYPE": "sessionEnd"
+                },
+                "timeoutSec": 10
+            }
+        ],
+        "userPromptSubmitted": [
+            {
+                "type": "command",
+                "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
+                "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
+                "cwd": ".",
+                "env": {
+                    "FRIKFRAK_HOOK_TYPE": "userPromptSubmitted"
+                },
+                "timeoutSec": 10
+            }
+        ],
+        "preToolUse": [
+            {
+                "type": "command",
+                "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
+                "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
+                "cwd": ".",
+                "env": {
+                    "FRIKFRAK_HOOK_TYPE": "preToolUse"
+                },
+                "timeoutSec": 10
+            }
+        ],
+        "postToolUse": [
+            {
+                "type": "command",
+                "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
+                "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
+                "cwd": ".",
+                "env": {
+                    "FRIKFRAK_HOOK_TYPE": "postToolUse"
+                },
+                "timeoutSec": 10
+            }
+        ],
+        "errorOccurred": [
+            {
+                "type": "command",
+                "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
+                "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
+                "cwd": ".",
+                "env": {
+                    "FRIKFRAK_HOOK_TYPE": "errorOccurred"
+                },
+                "timeoutSec": 10
+            }
+        ]
+    }
+}

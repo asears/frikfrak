@@ -6,6 +6,9 @@ Frikfrak is a VS Code extension project that is incrementally porting Miniverse 
 
 https://github.com/ianscott313/miniverse/
 
+https://github.com/pablodelucca/pixel-agents
+
+
 ## Current MVP
 
 - Local core server starts on activation (default `127.0.0.1:4321`, auto-increments if occupied).

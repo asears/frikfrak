@@ -12,5 +12,7 @@
     "typescript.tsc.autoDetect": "off",
     "npm.autoDetect": "off",
     "debug.onTaskErrors": "showErrors",
-    "debug.openDebug": "openOnSessionStart"
+    "debug.openDebug": "openOnSessionStart",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
 }
