@@ -5,6 +5,7 @@ Frikfrak is a VS Code extension project that is incrementally porting Miniverse 
 ## Current MVP
 
 - Local core server starts on activation (default `127.0.0.1:4321`, auto-increments if occupied).
+- Standalone local core server is available via `npm run server`.
 - Local test hook endpoint: `POST /api/hooks/claude-code`.
 - Command: `Test Frikfrak` opens a webview client.
 - Webview renders one Miniverse sprite asset and supports WASD movement.
@@ -24,6 +25,7 @@ Frikfrak is a VS Code extension project that is incrementally porting Miniverse 
 
 ```bash
 npm run compile
+npm run server
 ```
 
 Run the extension in the Extension Development Host and execute `Test Frikfrak` from the command palette.

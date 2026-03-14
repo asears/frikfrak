@@ -13,6 +13,7 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Add `Test Frikfrak` command
 - [x] Open a client window that displays an asset and supports WASD movement
 - [x] Validate build and extension activation
+- [x] Add standalone core server command (`npm run server`) for local testing
 
 ## Notes
 - Local hook endpoint target: `http://localhost:4321/api/hooks/claude-code`
