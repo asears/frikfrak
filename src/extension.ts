@@ -21,6 +21,14 @@ interface WorldData {
 	tiles: Record<string, string>;
 }
 
+interface ClientPanelOptions {
+	title: string;
+	viewType: string;
+	useWasm: boolean;
+}
+
+const FRIKFRAK_WASM_FILENAME = 'frikfrak_core.wasm';
+
 const COZY_STARTUP_WORLD: WorldData = {
 	gridCols: 16,
 	gridRows: 12,
@@ -93,18 +101,44 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	const testFrikfrakCommand = vscode.commands.registerCommand('frikfrak.testFrikfrak', () => {
-		openTestFrikfrakClient(context, coreServer?.getPort() ?? serverPort);
+    openTestFrikfrakClient(context, coreServer?.getPort() ?? serverPort);
+  });
+
+  const testWasmFrikfrakCommand = vscode.commands.registerCommand('frikfrak.testWasmFrikfrak', () => {
+    openTestWasmFrikfrakClient(context, coreServer?.getPort() ?? serverPort);
 	});
 
-	context.subscriptions.push(disposable, testFrikfrakCommand, {
+  context.subscriptions.push(disposable, testFrikfrakCommand, testWasmFrikfrakCommand, {
 		dispose: () => coreServer?.stop(),
 	});
 }
 
 function openTestFrikfrakClient(context: vscode.ExtensionContext, serverPort: number): void {
+  const panel = createClientPanel(context, serverPort, {
+    title: 'Test Frikfrak',
+    viewType: 'frikfrakTest',
+    useWasm: false,
+  });
+  bindProblemCount(panel);
+}
+
+function openTestWasmFrikfrakClient(context: vscode.ExtensionContext, serverPort: number): void {
+  const panel = createClientPanel(context, serverPort, {
+    title: 'Test WASM Frikfrak',
+    viewType: 'frikfrakWasmTest',
+    useWasm: true,
+  });
+  bindProblemCount(panel);
+}
+
+function createClientPanel(
+  context: vscode.ExtensionContext,
+  serverPort: number,
+  options: ClientPanelOptions,
+): vscode.WebviewPanel {
 	const panel = vscode.window.createWebviewPanel(
-		'frikfrakTest',
-		'Test Frikfrak',
+    options.viewType,
+    options.title,
 		vscode.ViewColumn.One,
 		{
 			enableScripts: true,
@@ -112,16 +146,52 @@ function openTestFrikfrakClient(context: vscode.ExtensionContext, serverPort: nu
 		},
 	);
 
-	panel.webview.html = getClientHtml(panel.webview, context.extensionUri, serverPort);
+  panel.webview.html = buildClientHtml(panel.webview, context.extensionUri, serverPort, options.useWasm);
+  return panel;
 }
 
-function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, serverPort: number): string {
+function bindProblemCount(panel: vscode.WebviewPanel): void {
+  const postProblemCount = () => {
+    panel.webview.postMessage({ type: 'problemCount', value: vscode.languages.getDiagnostics().length });
+  };
+
+  const diagnosticsSubscription = vscode.languages.onDidChangeDiagnostics(() => {
+    postProblemCount();
+  });
+
+  const visibilitySubscription = panel.onDidChangeViewState(() => {
+    if (panel.visible) {
+      postProblemCount();
+    }
+  });
+
+  const receiveSubscription = panel.webview.onDidReceiveMessage((message) => {
+    if (message && message.type === 'ready') {
+      postProblemCount();
+    }
+  });
+
+  panel.onDidDispose(() => {
+    diagnosticsSubscription.dispose();
+    visibilitySubscription.dispose();
+    receiveSubscription.dispose();
+  });
+
+  postProblemCount();
+}
+
+function buildClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, serverPort: number, useWasm: boolean): string {
 	const nonce = getNonce();
 	const assetUri = (...segments: string[]): string => webview.asWebviewUri(
 		vscode.Uri.joinPath(extensionUri, 'assets', 'miniverse', ...segments),
 	).toString();
+  const wasmUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'assets', 'wasm', FRIKFRAK_WASM_FILENAME),
+  ).toString();
 
 	const clientConfig = {
+    useWasm,
+    wasmUri,
 		tileSize: 32,
 		frameWidth: 64,
 		frameHeight: 64,
@@ -163,7 +233,7 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}'; connect-src http://127.0.0.1:${serverPort} http://localhost:${serverPort};" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}'; connect-src ${webview.cspSource} http://127.0.0.1:${serverPort} http://localhost:${serverPort};" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Test Frikfrak</title>
   <style>
@@ -261,8 +331,8 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
   <div class="shell">
     <div id="hud">
       <div>
-        <strong>Frikfrak Test Client</strong>
-        Cozy Startup office loaded from Miniverse assets.
+        <strong>${useWasm ? 'Frikfrak WASM Client' : 'Frikfrak Test Client'}</strong>
+        Cozy Startup office loaded from Miniverse assets.${useWasm ? ' Runtime state is driven by a Rust WASM core.' : ''}
       </div>
       <div>
         <strong>Controls</strong>
@@ -272,6 +342,7 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
         <strong>Status</strong>
         <div id="server">server: checking...</div>
         <div id="interaction">tip: head to the coffee bar</div>
+        <div id="runtime">runtime: ${useWasm ? 'loading wasm...' : 'javascript client'}</div>
       </div>
     </div>
     <div class="stage-frame">
@@ -284,6 +355,8 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
     const ctx = canvas.getContext('2d');
     const serverText = document.getElementById('server');
     const interactionText = document.getElementById('interaction');
+    const runtimeText = document.getElementById('runtime');
+    const vscodeApi = acquireVsCodeApi();
     ctx.imageSmoothingEnabled = false;
 
     const tileSize = config.tileSize;
@@ -314,9 +387,30 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
       shadowHeight: 7,
     };
 
+    const wasmState = {
+      instance: null,
+      exports: null,
+      frameCount: 0,
+      problemCount: 0,
+      ready: !config.useWasm,
+    };
+
     let thrownMachine = null;
     let espressoVisible = true;
     let statusUntil = 0;
+
+    window.addEventListener('message', (event) => {
+      const message = event.data;
+      if (!message || message.type !== 'problemCount') {
+        return;
+      }
+
+      const nextCount = Number(message.value) || 0;
+      wasmState.problemCount = nextCount;
+      if (wasmState.exports && typeof wasmState.exports.set_problem_count === 'function') {
+        wasmState.exports.set_problem_count(nextCount);
+      }
+    });
 
     function getPropRect(prop) {
       return {
@@ -514,6 +608,26 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
         ctx.fillStyle = '#4a4a4a';
         ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
       }
+
+	  if (prop.id === 'wooden_desk_single') {
+	    drawDeskMonitor(rect, wasmState.problemCount);
+	  }
+    }
+
+    function drawDeskMonitor(rect, problemCount) {
+      const screenX = rect.x + rect.width * 0.42;
+      const screenY = rect.y + rect.height * 0.14;
+      const screenWidth = rect.width * 0.22;
+      const screenHeight = rect.height * 0.16;
+      ctx.fillStyle = '#112719';
+      ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
+      ctx.strokeStyle = '#2d4c3a';
+      ctx.strokeRect(screenX, screenY, screenWidth, screenHeight);
+      ctx.fillStyle = '#7df4a7';
+      ctx.font = 'bold 9px Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(problemCount), screenX + screenWidth / 2, screenY + screenHeight / 2 + 0.5);
     }
 
     function drawProps(collection) {
@@ -616,14 +730,52 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
       }
     }
 
+    function updateRuntime() {
+      if (config.useWasm && wasmState.exports) {
+        wasmState.frameCount = wasmState.exports.frame_count();
+        wasmState.problemCount = wasmState.exports.problem_count();
+        runtimeText.textContent = 'runtime: wasm frame ' + wasmState.frameCount + ' | problems ' + wasmState.problemCount;
+        return;
+      }
+
+      runtimeText.textContent = config.useWasm ? 'runtime: wasm unavailable' : 'runtime: javascript client';
+    }
+
+    async function initWasm() {
+      if (!config.useWasm) {
+        runtimeText.textContent = 'runtime: javascript client';
+        return;
+      }
+
+      try {
+        const response = await fetch(config.wasmUri);
+        const bytes = await response.arrayBuffer();
+        const result = await WebAssembly.instantiate(bytes, {});
+        wasmState.instance = result.instance;
+        wasmState.exports = result.instance.exports;
+        if (typeof wasmState.exports.set_problem_count === 'function') {
+          wasmState.exports.set_problem_count(wasmState.problemCount);
+        }
+        wasmState.ready = true;
+        runtimeText.textContent = 'runtime: wasm online';
+      } catch (error) {
+        runtimeText.textContent = 'runtime: wasm failed';
+        console.error(error);
+      }
+    }
+
     let previousTime = performance.now();
     function frame(now) {
       const delta = Math.min((now - previousTime) / 1000, 0.05);
       previousTime = now;
+      if (config.useWasm && wasmState.exports && typeof wasmState.exports.tick === 'function') {
+        wasmState.exports.tick();
+      }
       updatePlayer(delta);
       updateAnimation(delta);
       updateThrownMachine(delta);
       updateUi(now);
+      updateRuntime();
       drawScene();
       requestAnimationFrame(frame);
     }
@@ -658,8 +810,9 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
         serverText.textContent = 'server: unavailable';
       });
 
-    loadAssets().then(() => {
+    Promise.all([loadAssets(), initWasm()]).then(() => {
       drawScene();
+      vscodeApi.postMessage({ type: 'ready' });
       requestAnimationFrame(frame);
     });
   </script>

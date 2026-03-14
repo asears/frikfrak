@@ -15,6 +15,8 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Render the Cozy Startup floor, wall tiles, and office props in the test client
 - [x] Fix citizen rendering to use full Miniverse action and walk sprite sheets
 - [x] Add nearby `Z` interaction that throws the espresso machine with gravity and bounce
+- [x] Add a separate `Test WASM Frikfrak` command backed by a tiny Rust WASM core
+- [x] Show the live Problems count on the desk computer screen, starting at `0`
 - [x] Validate build and extension activation
 - [x] Add standalone core server command (`npm run server`) for local testing
 
@@ -25,3 +27,5 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - Test client now renders the Cozy Startup office directly from copied Miniverse tiles and prop art.
 - Dexter uses 64x64 Miniverse frames, idles from the actions sheet, and switches to the walk sheet while moving.
 - Press `Z` near the espresso machine to launch it with a simple gravity and bounce simulation.
+- A minimal Rust WASM core now exposes frame and problem-count state for the dedicated WASM test client.
+- Desk monitors render the current VS Code diagnostics count on a green screen overlay.

@@ -3,3 +3,6 @@ dist
 node_modules
 .vscode-test/
 *.vsix
+wasm/frikfrak_wasm/target/
+.tmp-wasm-check.txt
+!.vscode
