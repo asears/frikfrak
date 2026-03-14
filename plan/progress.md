@@ -12,6 +12,9 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Add local core server in extension host
 - [x] Add `Test Frikfrak` command
 - [x] Open a client window that displays an asset and supports WASD movement
+- [x] Render the Cozy Startup floor, wall tiles, and office props in the test client
+- [x] Fix citizen rendering to use full Miniverse action and walk sprite sheets
+- [x] Add nearby `Z` interaction that throws the espresso machine with gravity and bounce
 - [x] Validate build and extension activation
 - [x] Add standalone core server command (`npm run server`) for local testing
 
@@ -19,3 +22,6 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - Local hook endpoint target: `http://localhost:4321/api/hooks/claude-code`
 - Initial client is an MVP webview implementation for quick iteration on movement and rendering.
 - Assets copied from `miniverse/demo/public/universal_assets` and `miniverse/demo/public/worlds` into `assets/miniverse`.
+- Test client now renders the Cozy Startup office directly from copied Miniverse tiles and prop art.
+- Dexter uses 64x64 Miniverse frames, idles from the actions sheet, and switches to the walk sheet while moving.
+- Press `Z` near the espresso machine to launch it with a simple gravity and bounce simulation.

@@ -1,6 +1,84 @@
 import * as vscode from 'vscode';
 import { FrikfrakCoreServer } from './coreServer';
 
+type PropLayer = 'below' | 'above';
+
+interface WorldProp {
+	id: string;
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+	layer: PropLayer;
+}
+
+interface WorldData {
+	gridCols: number;
+	gridRows: number;
+	floor: string[][];
+	props: WorldProp[];
+	propImages: Record<string, string>;
+	tiles: Record<string, string>;
+}
+
+const COZY_STARTUP_WORLD: WorldData = {
+	gridCols: 16,
+	gridRows: 12,
+	floor: [
+		Array(16).fill('exposed_brick_wall'),
+		Array(16).fill('exposed_brick_wall'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+		Array(16).fill('main_floor'),
+	],
+	props: [
+		{ id: 'large_window', x: 1.25, y: 0, w: 3, h: 2, layer: 'below' },
+		{ id: 'large_window', x: 6.5, y: 0, w: 3, h: 2, layer: 'below' },
+		{ id: 'large_window', x: 11.75, y: 0, w: 3, h: 2, layer: 'below' },
+		{ id: 'wooden_framed_whiteboard', x: 4.25, y: 0.5, w: 2, h: 1, layer: 'below' },
+		{ id: 'wooden_desk_single', x: 2, y: 4.5, w: 3, h: 2, layer: 'below' },
+		{ id: 'ergonomic_chair', x: 3, y: 6.5, w: 1, h: 1, layer: 'above' },
+		{ id: 'area_rug_lounge', x: 10.5, y: 4.75, w: 4, h: 3, layer: 'below' },
+		{ id: 'low_coffee_table', x: 11.5, y: 5.75, w: 1.5, h: 1.5, layer: 'below' },
+		{ id: 'bean_bag_chair_dark', x: 10, y: 5.25, w: 1.5, h: 1.5, layer: 'below' },
+		{ id: 'bean_bag_chair_light', x: 13, y: 5.25, w: 1.5, h: 1.5, layer: 'below' },
+		{ id: 'coffee_bar_counter', x: 0, y: 2, w: 2.7, h: 2.5, layer: 'below' },
+		{ id: 'bookshelf_packed', x: 12, y: 2.5, w: 2.3, h: 2, layer: 'below' },
+		{ id: 'wooden_desk_single', x: 6, y: 7, w: 3, h: 2, layer: 'below' },
+		{ id: 'ergonomic_chair', x: 7, y: 9, w: 1, h: 1, layer: 'above' },
+		{ id: 'tall_potted_plant', x: 10.75, y: 2.5, w: 1, h: 2, layer: 'below' },
+		{ id: 'mini_fridge', x: 14.5, y: 3.25, w: 0.8, h: 1.1, layer: 'below' },
+		{ id: 'espresso_machine', x: 0.5, y: 3, w: 1.1, h: 0.8, layer: 'below' },
+	],
+	propImages: {
+		wooden_desk_single: 'worlds/cozy-startup/world_assets/props/prop_0_wooden_desk_single.png',
+		coffee_bar_counter: 'worlds/cozy-startup/world_assets/props/prop_4_coffee_bar_counter.png',
+		ergonomic_chair: 'worlds/cozy-startup/world_assets/props/prop_1_ergonomic_chair.png',
+		tall_potted_plant: 'worlds/cozy-startup/world_assets/props/prop_2_tall_potted_plant.png',
+		mini_fridge: 'worlds/cozy-startup/world_assets/props/prop_6_mini_fridge.png',
+		bookshelf_packed: 'worlds/cozy-startup/world_assets/props/prop_3_bookshelf_packed.png',
+		espresso_machine: 'worlds/cozy-startup/world_assets/props/prop_5_espresso_machine.png',
+		low_coffee_table: 'worlds/cozy-startup/world_assets/props/prop_9_low_coffee_table.png',
+		bean_bag_chair_dark: 'worlds/cozy-startup/world_assets/props/prop_7_bean_bag_chair_dark.png',
+		bean_bag_chair_light: 'worlds/cozy-startup/world_assets/props/prop_8_bean_bag_chair_light.png',
+		wooden_framed_whiteboard: 'worlds/cozy-startup/world_assets/props/prop_11_wooden_framed_whiteboard.png',
+		area_rug_lounge: 'worlds/cozy-startup/world_assets/props/prop_12_area_rug_lounge.png',
+		large_window: 'worlds/cozy-startup/world_assets/props/prop_10_large_window.png',
+	},
+	tiles: {
+		main_floor: 'worlds/cozy-startup/world_assets/tiles/main_floor.png',
+		exposed_brick_wall: 'worlds/cozy-startup/world_assets/tiles/exposed_brick_wall.png',
+		concrete_accent: 'worlds/cozy-startup/world_assets/tiles/concrete_accent.png',
+	},
+};
+
 let coreServer: FrikfrakCoreServer | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -39,16 +117,47 @@ function openTestFrikfrakClient(context: vscode.ExtensionContext, serverPort: nu
 
 function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, serverPort: number): string {
 	const nonce = getNonce();
-	const spriteUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(
-			extensionUri,
-			'assets',
-			'miniverse',
-			'universal_assets',
-			'citizens',
-			'dexter_walk.png',
-		),
-	);
+	const assetUri = (...segments: string[]): string => webview.asWebviewUri(
+		vscode.Uri.joinPath(extensionUri, 'assets', 'miniverse', ...segments),
+	).toString();
+
+	const clientConfig = {
+		tileSize: 32,
+		frameWidth: 64,
+		frameHeight: 64,
+		spriteSheets: {
+			walk: assetUri('universal_assets', 'citizens', 'dexter_walk.png'),
+			actions: assetUri('universal_assets', 'citizens', 'dexter_actions.png'),
+		},
+		world: {
+			...COZY_STARTUP_WORLD,
+			tiles: Object.fromEntries(
+				Object.entries(COZY_STARTUP_WORLD.tiles).map(([key, path]) => [key, assetUri(...path.split('/'))]),
+			),
+			propImages: Object.fromEntries(
+				Object.entries(COZY_STARTUP_WORLD.propImages).map(([key, path]) => [key, assetUri(...path.split('/'))]),
+			),
+		},
+		animations: {
+			idle_down: { sheet: 'actions', row: 3, frames: 4, speed: 0.5 },
+			idle_up: { sheet: 'actions', row: 3, frames: 4, speed: 0.5 },
+			idle_left: { sheet: 'actions', row: 3, frames: 4, speed: 0.5 },
+			idle_right: { sheet: 'actions', row: 3, frames: 4, speed: 0.5 },
+			walk_down: { sheet: 'walk', row: 0, frames: 4, speed: 0.15 },
+			walk_up: { sheet: 'walk', row: 1, frames: 4, speed: 0.15 },
+			walk_left: { sheet: 'walk', row: 2, frames: 4, speed: 0.15 },
+			walk_right: { sheet: 'walk', row: 3, frames: 4, speed: 0.15 },
+			working: { sheet: 'actions', row: 0, frames: 4, speed: 0.3 },
+			sleeping: { sheet: 'actions', row: 1, frames: 2, speed: 0.8 },
+			talking: { sheet: 'actions', row: 2, frames: 4, speed: 0.15 },
+		},
+		player: {
+			x: 6.5,
+			y: 8.5,
+			speed: 4.25,
+			facing: 'down',
+		},
+	};
 
 	return `<!DOCTYPE html>
 <html lang="en">
@@ -58,33 +167,476 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Test Frikfrak</title>
   <style>
-    body { margin: 0; background: #111; color: #ddd; font-family: sans-serif; }
-    #hud { padding: 8px 12px; font-size: 12px; display: flex; gap: 16px; align-items: center; }
-    canvas { display: block; margin: 0 auto; border: 1px solid #333; image-rendering: pixelated; }
+    :root {
+      color-scheme: dark;
+      --bg: #181816;
+      --panel: #23211d;
+      --panel-2: #2d2a24;
+      --accent: #f2b257;
+      --accent-2: #8cc7b5;
+      --text: #f1ece1;
+      --muted: #c3b9a8;
+      --shadow: rgba(0, 0, 0, 0.32);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at top, rgba(242, 178, 87, 0.12), transparent 38%),
+        linear-gradient(180deg, #141310 0%, #1d1b17 100%);
+      color: var(--text);
+      font-family: Consolas, 'Courier New', monospace;
+    }
+
+    .shell {
+      width: min(100vw, 860px);
+      padding: 18px;
+    }
+
+    #hud {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, rgba(45, 42, 36, 0.96), rgba(32, 29, 25, 0.94));
+      border: 1px solid rgba(242, 178, 87, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 18px 40px var(--shadow);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    #hud strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+
+    #interaction {
+      color: var(--accent-2);
+    }
+
+    .stage-frame {
+      position: relative;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(33, 30, 26, 0.96), rgba(24, 22, 19, 0.98));
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 24px 50px var(--shadow);
+      overflow: hidden;
+    }
+
+    .stage-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 30%);
+      pointer-events: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      image-rendering: pixelated;
+      background: #111;
+    }
+
+    @media (max-width: 700px) {
+      #hud {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="hud">
-    <span>Frikfrak Test Client</span>
-    <span>Use W A S D to move</span>
-    <span id="server">server: checking...</span>
+  <div class="shell">
+    <div id="hud">
+      <div>
+        <strong>Frikfrak Test Client</strong>
+        Cozy Startup office loaded from Miniverse assets.
+      </div>
+      <div>
+        <strong>Controls</strong>
+        W A S D to move. Z throws the espresso machine when you are close enough.
+      </div>
+      <div>
+        <strong>Status</strong>
+        <div id="server">server: checking...</div>
+        <div id="interaction">tip: head to the coffee bar</div>
+      </div>
+    </div>
+    <div class="stage-frame">
+      <canvas id="stage" width="512" height="384"></canvas>
+    </div>
   </div>
-  <canvas id="stage" width="640" height="384"></canvas>
   <script nonce="${nonce}">
+    const config = ${JSON.stringify(clientConfig)};
     const canvas = document.getElementById('stage');
     const ctx = canvas.getContext('2d');
     const serverText = document.getElementById('server');
-    const sprite = new Image();
-    sprite.src = '${spriteUri}';
+    const interactionText = document.getElementById('interaction');
+    ctx.imageSmoothingEnabled = false;
 
-    const position = { x: 240, y: 140 };
-    const speed = 2;
+    const tileSize = config.tileSize;
+    const frameWidth = config.frameWidth;
+    const frameHeight = config.frameHeight;
+    const worldWidth = config.world.gridCols * tileSize;
+    const worldHeight = config.world.gridRows * tileSize;
+    const gravity = 680;
+
     const keys = { w: false, a: false, s: false, d: false };
+    const images = new Map();
+    const props = [...config.world.props].sort((left, right) => (left.y + left.h) - (right.y + right.h));
+    const espressoProp = props.find((prop) => prop.id === 'espresso_machine') || null;
+    const belowProps = props.filter((prop) => prop.layer === 'below');
+    const aboveProps = props.filter((prop) => prop.layer === 'above');
+
+    const player = {
+      x: config.player.x * tileSize,
+      y: config.player.y * tileSize,
+      speed: config.player.speed * tileSize,
+      facing: config.player.facing,
+      animation: 'idle_down',
+      frame: 0,
+      frameTimer: 0,
+      width: tileSize,
+      height: tileSize,
+      shadowWidth: 18,
+      shadowHeight: 7,
+    };
+
+    let thrownMachine = null;
+    let espressoVisible = true;
+    let statusUntil = 0;
+
+    function getPropRect(prop) {
+      return {
+        x: prop.x * tileSize,
+        y: prop.y * tileSize,
+        width: prop.w * tileSize,
+        height: prop.h * tileSize,
+      };
+    }
+
+    function setInteractionMessage(message, durationMs) {
+      interactionText.textContent = message;
+      if (durationMs) {
+        statusUntil = performance.now() + durationMs;
+      }
+    }
+
+    function loadImage(key, src) {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+          images.set(key, image);
+          resolve();
+        };
+        image.onerror = () => resolve();
+        image.src = src;
+      });
+    }
+
+    async function loadAssets() {
+      const assetLoads = [
+        loadImage('sheet:walk', config.spriteSheets.walk),
+        loadImage('sheet:actions', config.spriteSheets.actions),
+        ...Object.entries(config.world.tiles).map(([id, src]) => loadImage('tile:' + id, src)),
+        ...Object.entries(config.world.propImages).map(([id, src]) => loadImage('prop:' + id, src)),
+      ];
+      await Promise.all(assetLoads);
+    }
+
+    function getAnimation(name) {
+      return config.animations[name] || config.animations.idle_down;
+    }
+
+    function playAnimation(name) {
+      if (player.animation === name) {
+        return;
+      }
+      player.animation = name;
+      player.frame = 0;
+      player.frameTimer = 0;
+    }
+
+    function updateAnimation(delta) {
+      const animation = getAnimation(player.animation);
+      player.frameTimer += delta;
+      while (player.frameTimer >= animation.speed) {
+        player.frameTimer -= animation.speed;
+        player.frame = (player.frame + 1) % animation.frames;
+      }
+    }
+
+    function updatePlayer(delta) {
+      let moveX = 0;
+      let moveY = 0;
+
+      if (keys.w) moveY -= 1;
+      if (keys.s) moveY += 1;
+      if (keys.a) moveX -= 1;
+      if (keys.d) moveX += 1;
+
+      if (moveX !== 0 || moveY !== 0) {
+        const length = Math.hypot(moveX, moveY) || 1;
+        moveX /= length;
+        moveY /= length;
+        player.x += moveX * player.speed * delta;
+        player.y += moveY * player.speed * delta;
+
+        if (Math.abs(moveX) > Math.abs(moveY)) {
+          player.facing = moveX > 0 ? 'right' : 'left';
+        } else {
+          player.facing = moveY > 0 ? 'down' : 'up';
+        }
+
+        playAnimation('walk_' + player.facing);
+      } else {
+        playAnimation('idle_' + player.facing);
+      }
+
+      player.x = Math.max(0, Math.min(worldWidth - tileSize, player.x));
+      player.y = Math.max(tileSize, Math.min(worldHeight - tileSize, player.y));
+    }
+
+    function updateThrownMachine(delta) {
+      if (!thrownMachine) {
+        return;
+      }
+
+      if (thrownMachine.restTimer > 0) {
+        thrownMachine.restTimer -= delta;
+        if (thrownMachine.restTimer <= 0) {
+          thrownMachine = null;
+          espressoVisible = true;
+          setInteractionMessage('espresso machine reset on the coffee bar');
+        }
+        return;
+      }
+
+      thrownMachine.vy += gravity * delta;
+      thrownMachine.x += thrownMachine.vx * delta;
+      thrownMachine.y += thrownMachine.vy * delta;
+      thrownMachine.angle += thrownMachine.angularVelocity * delta;
+      thrownMachine.x = Math.max(0, Math.min(worldWidth - thrownMachine.width, thrownMachine.x));
+
+      if (thrownMachine.y >= thrownMachine.groundY) {
+        thrownMachine.y = thrownMachine.groundY;
+        if (Math.abs(thrownMachine.vy) > 70 && thrownMachine.bounces < 3) {
+          thrownMachine.vy *= -0.42;
+          thrownMachine.vx *= 0.82;
+          thrownMachine.angularVelocity *= 0.7;
+          thrownMachine.bounces += 1;
+        } else {
+          thrownMachine.vx = 0;
+          thrownMachine.vy = 0;
+          thrownMachine.angularVelocity = 0;
+          thrownMachine.restTimer = 0.45;
+        }
+      }
+    }
+
+    function isNearEspressoMachine() {
+      if (!espressoProp || !espressoVisible || thrownMachine) {
+        return false;
+      }
+      const rect = getPropRect(espressoProp);
+      const playerCenterX = player.x + tileSize * 0.5;
+      const playerCenterY = player.y + tileSize * 0.7;
+      const propCenterX = rect.x + rect.width * 0.5;
+      const propCenterY = rect.y + rect.height * 0.5;
+      return Math.hypot(playerCenterX - propCenterX, playerCenterY - propCenterY) < tileSize * 2.4;
+    }
+
+    function tryThrowEspressoMachine() {
+      if (!espressoProp || thrownMachine) {
+        return;
+      }
+
+      if (!isNearEspressoMachine()) {
+        setInteractionMessage('move closer to the coffee bar before pressing Z', 1200);
+        return;
+      }
+
+      const rect = getPropRect(espressoProp);
+      const horizontalDirection = player.facing === 'left' ? -1 : player.facing === 'right' ? 1 : player.x < rect.x ? -1 : 1;
+      thrownMachine = {
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
+        vx: horizontalDirection * 92,
+        vy: -255,
+        angle: 0,
+        angularVelocity: horizontalDirection * 8,
+        bounces: 0,
+        groundY: Math.min(worldHeight - rect.height - 8, rect.y + tileSize * 2.25),
+        restTimer: 0,
+      };
+      espressoVisible = false;
+      setInteractionMessage('espresso machine airborne', 1000);
+    }
+
+    function drawTiles() {
+      for (let row = 0; row < config.world.floor.length; row += 1) {
+        for (let col = 0; col < config.world.floor[row].length; col += 1) {
+          const tileId = config.world.floor[row][col];
+          const image = images.get('tile:' + tileId);
+          if (image) {
+            ctx.drawImage(image, col * tileSize, row * tileSize, tileSize, tileSize);
+          } else {
+            ctx.fillStyle = row < 2 ? '#734838' : '#907553';
+            ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
+          }
+        }
+      }
+    }
+
+    function drawProp(prop) {
+      if (prop.id === 'espresso_machine' && !espressoVisible) {
+        return;
+      }
+      const rect = getPropRect(prop);
+      const image = images.get('prop:' + prop.id);
+      if (image) {
+        ctx.drawImage(image, rect.x, rect.y, rect.width, rect.height);
+      } else {
+        ctx.fillStyle = '#4a4a4a';
+        ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+      }
+    }
+
+    function drawProps(collection) {
+      for (const prop of collection) {
+        drawProp(prop);
+      }
+    }
+
+    function drawPlayer() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+      ctx.beginPath();
+      ctx.ellipse(
+        Math.round(player.x + tileSize * 0.5),
+        Math.round(player.y + tileSize * 0.86),
+        player.shadowWidth,
+        player.shadowHeight,
+        0,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
+
+      const animation = getAnimation(player.animation);
+      const spriteSheet = images.get('sheet:' + animation.sheet);
+      const drawX = Math.round(player.x + (tileSize - frameWidth) / 2);
+      const drawY = Math.round(player.y + (tileSize - frameHeight));
+
+      if (spriteSheet) {
+        ctx.drawImage(
+          spriteSheet,
+          player.frame * frameWidth,
+          animation.row * frameHeight,
+          frameWidth,
+          frameHeight,
+          drawX,
+          drawY,
+          frameWidth,
+          frameHeight,
+        );
+      } else {
+        ctx.fillStyle = '#f2b257';
+        ctx.fillRect(drawX + 16, drawY + 12, 32, 48);
+      }
+    }
+
+    function drawThrownMachine() {
+      if (!thrownMachine) {
+        return;
+      }
+
+      const sprite = images.get('prop:espresso_machine');
+      ctx.save();
+      ctx.translate(thrownMachine.x + thrownMachine.width / 2, thrownMachine.y + thrownMachine.height / 2);
+      ctx.rotate(thrownMachine.angle);
+      if (sprite) {
+        ctx.drawImage(
+          sprite,
+          -thrownMachine.width / 2,
+          -thrownMachine.height / 2,
+          thrownMachine.width,
+          thrownMachine.height,
+        );
+      } else {
+        ctx.fillStyle = '#c4c7cc';
+        ctx.fillRect(-thrownMachine.width / 2, -thrownMachine.height / 2, thrownMachine.width, thrownMachine.height);
+      }
+      ctx.restore();
+    }
+
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawTiles();
+      drawProps(belowProps);
+      drawPlayer();
+      drawProps(aboveProps);
+      drawThrownMachine();
+
+      if (isNearEspressoMachine()) {
+        ctx.fillStyle = 'rgba(242, 178, 87, 0.2)';
+        ctx.strokeStyle = 'rgba(242, 178, 87, 0.85)';
+        const rect = getPropRect(espressoProp);
+        ctx.beginPath();
+        ctx.roundRect(rect.x - 6, rect.y - 6, rect.width + 12, rect.height + 12, 8);
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+
+    function updateUi(now) {
+      if (statusUntil > 0 && now > statusUntil) {
+        statusUntil = 0;
+      }
+
+      if (statusUntil === 0) {
+        setInteractionMessage(
+          isNearEspressoMachine()
+            ? 'press Z to launch the espresso machine'
+            : 'tip: head to the coffee bar',
+        );
+      }
+    }
+
+    let previousTime = performance.now();
+    function frame(now) {
+      const delta = Math.min((now - previousTime) / 1000, 0.05);
+      previousTime = now;
+      updatePlayer(delta);
+      updateAnimation(delta);
+      updateThrownMachine(delta);
+      updateUi(now);
+      drawScene();
+      requestAnimationFrame(frame);
+    }
 
     window.addEventListener('keydown', (event) => {
       const key = event.key.toLowerCase();
       if (key in keys) {
         keys[key] = true;
+        event.preventDefault();
+        return;
+      }
+      if (key === 'z' && !event.repeat) {
+        tryThrowEspressoMachine();
         event.preventDefault();
       }
     });
@@ -97,47 +649,6 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
       }
     });
 
-    function update() {
-      if (keys.w) position.y -= speed;
-      if (keys.s) position.y += speed;
-      if (keys.a) position.x -= speed;
-      if (keys.d) position.x += speed;
-      position.x = Math.max(0, Math.min(canvas.width - 32, position.x));
-      position.y = Math.max(0, Math.min(canvas.height - 48, position.y));
-    }
-
-    function drawBackground() {
-      ctx.fillStyle = '#1b1b1b';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#2a2a2a';
-      for (let x = 0; x < canvas.width; x += 32) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 32) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-    }
-
-    function render() {
-      update();
-      drawBackground();
-
-      if (sprite.complete) {
-        ctx.drawImage(sprite, 0, 0, 32, 48, Math.round(position.x), Math.round(position.y), 64, 96);
-      } else {
-        ctx.fillStyle = '#8ec5ff';
-        ctx.fillRect(Math.round(position.x), Math.round(position.y), 32, 48);
-      }
-
-      requestAnimationFrame(render);
-    }
-
     fetch('http://127.0.0.1:${serverPort}/api/health')
       .then((response) => response.json())
       .then((data) => {
@@ -147,7 +658,10 @@ function getClientHtml(webview: vscode.Webview, extensionUri: vscode.Uri, server
         serverText.textContent = 'server: unavailable';
       });
 
-    render();
+    loadAssets().then(() => {
+      drawScene();
+      requestAnimationFrame(frame);
+    });
   </script>
 </body>
 </html>`;
