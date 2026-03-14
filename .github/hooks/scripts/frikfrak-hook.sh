@@ -4,7 +4,7 @@
 # Receives agent hook input on stdin, forwards it to the Frikfrak extension
 # server, and optionally writes a timestamped log entry to disk.
 #
-# Configuration: .github/hooks/hooks-config.json  (run from repo root)
+# Configuration: .github/hooks/hooks-config.ini  (run from repo root)
 #   serverPort  – port the Frikfrak extension server is listening on  [4321]
 #   logToFile   – whether to append events to a log file              [false]
 #   logFolder   – log folder relative to repo root                    [logs]
@@ -14,16 +14,53 @@ set -euo pipefail
 # 1. Read JSON input from stdin
 INPUT=$(cat 2>/dev/null || echo '{}')
 
-# 2. Load hooks-config.json
-CONFIG_FILE=".github/hooks/hooks-config.json"
+# 2. Load hooks-config.ini
+CONFIG_FILE=".github/hooks/hooks-config.ini"
 SERVER_PORT=4321
 LOG_TO_FILE=false
 LOG_FOLDER="logs"
 
-if [ -f "$CONFIG_FILE" ] && command -v jq &>/dev/null; then
-    SERVER_PORT=$(jq -r '.serverPort // 4321' "$CONFIG_FILE" 2>/dev/null || echo 4321)
-    LOG_TO_FILE=$(jq -r '.logToFile // false' "$CONFIG_FILE" 2>/dev/null || echo false)
-    LOG_FOLDER=$(jq  -r '.logFolder // "logs"' "$CONFIG_FILE" 2>/dev/null || echo logs)
+if [ -f "$CONFIG_FILE" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+        trimmed=$(printf '%s' "$line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+        if [ -z "$trimmed" ]; then
+            continue
+        fi
+        case "$trimmed" in
+            \#*|\;*|\[*\])
+                continue
+                ;;
+        esac
+
+        case "$trimmed" in
+            *=*)
+                key=${trimmed%%=*}
+                value=${trimmed#*=}
+                key=$(printf '%s' "$key" | sed -e 's/[[:space:]]*$//' | tr '[:upper:]' '[:lower:]')
+                value=$(printf '%s' "$value" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+                case "$key" in
+                    serverport)
+                        case "$value" in
+                            ''|*[!0-9]*) ;;
+                            *) SERVER_PORT="$value" ;;
+                        esac
+                        ;;
+                    logtofile)
+                        lower=$(printf '%s' "$value" | tr '[:upper:]' '[:lower:]')
+                        case "$lower" in
+                            1|true|yes|on) LOG_TO_FILE=true ;;
+                            0|false|no|off) LOG_TO_FILE=false ;;
+                        esac
+                        ;;
+                    logfolder)
+                        if [ -n "$value" ]; then
+                            LOG_FOLDER="$value"
+                        fi
+                        ;;
+                esac
+                ;;
+        esac
+    done < "$CONFIG_FILE"
 fi
 
 # 3. Build payload

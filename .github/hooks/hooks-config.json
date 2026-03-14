@@ -1,6 +1,0 @@
-{
-    "_doc": "Frikfrak hooks configuration. Edit this file to control hook behaviour. Changes take effect immediately — no restart required.",
-    "serverPort": 4321,
-    "logToFile": false,
-    "logFolder": "logs"
-}

@@ -4,6 +4,10 @@
         "sessionStart": [
             {
                 "type": "command",
+                "hookSpecificOutput": {
+                    "hookEventName": "SessionStart",
+                    "additionalContext": ""
+                },
                 "bash": "./.github/hooks/scripts/frikfrak-hook.sh",
                 "powershell": "./.github/hooks/scripts/frikfrak-hook.ps1",
                 "cwd": ".",

@@ -4,13 +4,13 @@
 # Receives agent hook input on stdin, forwards it to the Frikfrak extension
 # server, and optionally writes a timestamped log entry to disk.
 #
-# Configuration: ../.github/hooks/hooks-config.json
+# Configuration: ../.github/hooks/hooks-config.ini
 #   serverPort  (number)  – port the Frikfrak extension server is listening on  [4321]
 #   logToFile   (bool)    – whether to append events to a log file              [false]
 #   logFolder   (string)  – log folder relative to repo root                    ["logs"]
 
 param()
-$ErrorActionPreference = "SilentlyContinue"
+# $ErrorActionPreference = "SilentlyContinue"
 
 # 1. Read JSON input from stdin
 $raw = $null
@@ -20,17 +20,40 @@ if ($raw) {
     try { $inputData = $raw | ConvertFrom-Json } catch { $inputData = @{ raw = $raw } }
 }
 
-# 2. Load hooks-config.json (repo root relative — hooks run with cwd=".")
-$configPath = ".github/hooks/hooks-config.json"
+# 2. Load hooks-config.ini (repo root relative — hooks run with cwd=".")
+$configPath = ".github/hooks/hooks-config.ini"
 $serverPort = 4321
 $logToFile  = $false
 $logFolder  = "logs"
 if (Test-Path $configPath) {
     try {
-        $cfg = Get-Content $configPath -Raw | ConvertFrom-Json
-        if ($null -ne $cfg.serverPort) { $serverPort = [int]$cfg.serverPort }
-        if ($null -ne $cfg.logToFile)  { $logToFile  = [bool]$cfg.logToFile }
-        if ($null -ne $cfg.logFolder)  { $logFolder  = [string]$cfg.logFolder }
+        foreach ($line in Get-Content $configPath) {
+            $trimmed = $line.Trim()
+            if (-not $trimmed -or $trimmed.StartsWith("#") -or $trimmed.StartsWith(";") -or $trimmed.StartsWith("[")) {
+                continue
+            }
+
+            if ($trimmed -match '^([^=]+?)\s*=\s*(.*)$') {
+                $key = $matches[1].Trim().ToLowerInvariant()
+                $value = $matches[2].Trim()
+                switch ($key) {
+                    "serverport" {
+                        $parsedPort = 0
+                        if ([int]::TryParse($value, [ref]$parsedPort)) {
+                            $serverPort = $parsedPort
+                        }
+                    }
+                    "logtofile" {
+                        $lower = $value.ToLowerInvariant()
+                        if ($lower -in @("1", "true", "yes", "on")) { $logToFile = $true }
+                        elseif ($lower -in @("0", "false", "no", "off")) { $logToFile = $false }
+                    }
+                    "logfolder" {
+                        if ($value) { $logFolder = $value }
+                    }
+                }
+            }
+        }
     } catch { }
 }
 
