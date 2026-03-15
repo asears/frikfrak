@@ -12,7 +12,7 @@
 param()
 # $ErrorActionPreference = "SilentlyContinue"
 
-# 1. Read JSON input from stdin
+# Read JSON input from stdin
 $raw = $null
 try { $raw = [Console]::In.ReadToEnd() } catch { $raw = "" }
 $inputData = $null
@@ -20,7 +20,7 @@ if ($raw) {
     try { $inputData = $raw | ConvertFrom-Json } catch { $inputData = @{ raw = $raw } }
 }
 
-# 2. Load hooks-config.ini (repo root relative — hooks run with cwd=".")
+# Load hooks-config.ini (repo root relative — hooks run with cwd=".")
 $configPath = ".github/hooks/hooks-config.ini"
 $serverPort = 4321
 $logToFile  = $false
@@ -57,21 +57,14 @@ if (Test-Path $configPath) {
     } catch { }
 }
 
-# 3. Build payload
+# Build payload
 $hookType  = if ($env:FRIKFRAK_HOOK_TYPE) { $env:FRIKFRAK_HOOK_TYPE } else { "unknown" }
 $tsMs      = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
 $tsIso     = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
 $payloadObj = @{ hookType = $hookType; timestamp = $tsMs; data = $inputData }
 $payloadJson = $payloadObj | ConvertTo-Json -Compress -Depth 10
 
-# 4. POST to the Frikfrak extension server
-try {
-    $uri = "http://127.0.0.1:$serverPort/api/hooks/$hookType"
-    $null = Invoke-RestMethod -Uri $uri -Method POST -Body $payloadJson `
-        -ContentType "application/json" -TimeoutSec 3
-} catch { }
-
-# 5. Optionally write to log file
+# Optionally write to log file
 if ($logToFile) {
     try {
         if (-not (Test-Path $logFolder)) {
@@ -81,3 +74,11 @@ if ($logToFile) {
         Add-Content -Path (Join-Path $logFolder "hooks.log") -Value $logLine -Encoding UTF8
     } catch { }
 }
+
+# POST to the Frikfrak extension server
+try {
+    $uri = "http://127.0.0.1:$serverPort/api/hooks/$hookType"
+    $null = Invoke-RestMethod -Uri $uri -Method POST -Body $payloadJson `
+        -ContentType "application/json" -TimeoutSec 3
+} catch { }
+

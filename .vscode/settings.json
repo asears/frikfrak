@@ -15,4 +15,5 @@
     "debug.openDebug": "openOnSessionStart",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
+    "terminal.integrated.env.windows": {},
 }

@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
+import * as path from 'node:path';
 import { FrikfrakCoreServer } from './coreServer';
+import { openTeletextPanel } from './teletextView';
 
 type PropLayer = 'below' | 'above';
 
@@ -142,12 +144,30 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   );
 
+  const planFolder = path.join(context.extensionUri.fsPath, 'plan');
+  const wikiCachePath = path.join(planFolder, 'wiki-events-cache.json');
+
+  const testTeletextCommand = vscode.commands.registerCommand(
+    'frikfrak.testFrikfrakTeletext',
+    async () => {
+      const hookEventsSnapshot = coreServer?.getEvents() ?? [];
+      await openTeletextPanel(
+        context,
+        coreServer?.getPort() ?? serverPort,
+        hookEventsSnapshot,
+        planFolder,
+        wikiCachePath,
+      );
+    },
+  );
+
   hookOutputChannel = vscode.window.createOutputChannel('Frikfrak Hooks');
 
   context.subscriptions.push(
     disposable,
     testFrikfrakCommand,
     testWasmFrikfrakCommand,
+    testTeletextCommand,
     hookOutputChannel,
     {
       dispose: () => coreServer?.stop(),

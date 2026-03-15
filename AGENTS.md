@@ -13,3 +13,8 @@ This repository contains agent-focused scaffolding for porting Miniverse functio
 - Keep changes minimal and testable.
 - Update progress checklist when milestones are reached.
 - Prefer local test infrastructure for hooks and server integration.
+- For markdown docs, use hyphenated filenames (`kebab-case`) instead of underscores.
+- Keep agent behavior docs aligned with plan state:
+	- `plan/psychology-of-agentic-self.md`
+	- `plan/agent_self/README.md`
+	- `plan/agent_self/structure.md`

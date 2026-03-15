@@ -29,6 +29,27 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Both players can pick up and throw the espresso machine OR desk computers (gravity + bounce)
 - [x] Desk computers disappear when thrown and return to desk after landing
 
+## Phase 2 — Teletext Command
+- [x] Add `Test Frikfrak Teletext` VS Code command
+- [x] 40×25 teletext layout via Canvas 2D with VT323/Share Tech Mono font
+- [x] WebGL CRT post-process (scanlines, barrel distortion, phosphor glow)
+- [x] Screen 1: CPU, memory, VS Code diagnostics-by-category, agent simulation, AST tree-map
+- [x] Screen 2: Wikipedia Portal:Current_events summary with plain-text word-wrap
+- [x] Left/right arrow key navigation between screens
+- [x] Live date/time header (updates per frame)
+- [x] Scrolling hook-events ticker footer
+- [x] Micropixel block-char animation overlay
+- [x] AST symbol index saved to `plan/ast-index.json`
+- [x] Wikipedia summary cached to `plan/wiki-events-cache.json` (1-hour TTL)
+- [x] Plan artefacts: `plan/heartbeat.md`, `plan/soul.md`
+
+## Phase 3 — Agent Self Structure
+- [x] Create `plan/agent_self/` structured markdown pack for agent identity, state, handoffs, best practices, rituals, prompts, and stack playbook
+- [x] Ground files in psychology-of-self, true-will discipline, and symbolic tarot-inspired ideation patterns
+- [x] Add reusable future-prompt templates for subagent workflows
+- [x] Add `future-card-game-extension.md` as separate avenue (Pokemon/Magic/One Piece-inspired interaction framing)
+- [x] Add root `.justfile` with common repo commands (Node, Rust/WASM, hooks, plan helpers, optional Python env)
+
 ## Notes
 - Local hook endpoint target: `http://localhost:4321/api/hooks/claude-code`
 - Initial client is an MVP webview implementation for quick iteration on movement and rendering.
@@ -47,3 +68,13 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - Config toggle: `.github/hooks/hooks-config.json` — set `"logToFile": true` to enable disk logging.
 - `.schemas/` folder created with `collection.schema.json`, `cookbook.schema.json`, `tools.schema.json` from github/awesome-copilot.
 - Player 2 sprite is tinted cyan via `ctx.filter = 'hue-rotate(140deg)'` to distinguish from Player 1.
+- **Teletext command** (`Test Frikfrak Teletext`) added in `teletextView.ts` — 40×25 block-char teletext layout rendered on a 2D canvas with a WebGL CRT post-process layer (scanlines, barrel-distortion, phosphor glow).
+- Screen 1: live CPU/memory, VS Code diagnostics by severity, agent simulation rows, AST tree-map.
+- Screen 2: Wikipedia Portal:Current_events plain-text summary (cached to `plan/wiki-events-cache.json`).
+- Left/right arrow keys switch screens. Date/time live in header. Footer is a scrolling hook-events ticker.
+- AST index saved to `plan/ast-index.json` on every open of the Teletext panel.
+- Plan artefacts: `plan/heartbeat.md`, `plan/soul.md` added alongside existing `history.md`/`progress.md`.
+- `plan/agent_self/` now contains concise operational docs for multi-agent behavior, state, and prompt reuse.
+- Tarot/cartomancy concepts are tracked as symbolic design prompts for pixel/teletext UI exploration, not as factual runtime logic.
+- Card-game style extension direction is parked as a separate future track in `plan/agent_self/future-card-game-extension.md`.
+- Added `.justfile` at repo root to simplify recurring commands across Node, Rust/WASM, and workspace helpers.

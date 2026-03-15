@@ -11,10 +11,10 @@
 
 set -euo pipefail
 
-# 1. Read JSON input from stdin
+# Read JSON input from stdin
 INPUT=$(cat 2>/dev/null || echo '{}')
 
-# 2. Load hooks-config.ini
+# Load hooks-config.ini
 CONFIG_FILE=".github/hooks/hooks-config.ini"
 SERVER_PORT=4321
 LOG_TO_FILE=false
@@ -63,7 +63,7 @@ if [ -f "$CONFIG_FILE" ]; then
     done < "$CONFIG_FILE"
 fi
 
-# 3. Build payload
+# Build payload
 HOOK_TYPE="${FRIKFRAK_HOOK_TYPE:-unknown}"
 TS_MS=$(date +%s)000
 TS_ISO=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z" 2>/dev/null || echo "")
@@ -76,17 +76,18 @@ else
     PAYLOAD="{\"hookType\":\"$HOOK_TYPE\",\"timestamp\":$TS_MS,\"data\":$INPUT}"
 fi
 
-# 4. POST to the Frikfrak extension server
+
+# Optionally write to log file
+if [ "$LOG_TO_FILE" = "true" ]; then
+    mkdir -p "$LOG_FOLDER"
+    echo "$TS_ISO [$HOOK_TYPE] $PAYLOAD" >> "$LOG_FOLDER/hooks.log"
+fi
+
+# POST to the Frikfrak extension server
 if command -v curl &>/dev/null; then
     curl -s -X POST \
         -H "Content-Type: application/json" \
         --max-time 3 \
         -d "$PAYLOAD" \
         "http://127.0.0.1:${SERVER_PORT}/api/hooks/${HOOK_TYPE}" >/dev/null 2>&1 || true
-fi
-
-# 5. Optionally write to log file
-if [ "$LOG_TO_FILE" = "true" ]; then
-    mkdir -p "$LOG_FOLDER"
-    echo "$TS_ISO [$HOOK_TYPE] $PAYLOAD" >> "$LOG_FOLDER/hooks.log"
 fi
