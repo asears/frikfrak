@@ -1,5 +1,17 @@
 # History
 
+## 2026-03-15 (Ledger Correction + Script Provenance)
+
+- Corrected `plan/agent_self/my-core`, `my-agent1`, and `my-agent2` files from prescriptive templates to descriptive snapshot-ledger records.
+- Standardized state files to include current state, recent events, evidence, slant snapshot, and next checkpoint.
+- Added `plan/agent_self/agent-ledger.md` to define ledger operating model and references.
+- Updated `plan/agent_self/state-index.md` to reflect ledger schema instead of prompt-action directives.
+- Created `plan/scripts/` and captured PowerShell provenance scripts:
+	- `snapshot-agent-self-ledgers.ps1`
+	- `rename-agent-self-kebab-case.ps1`
+	- `generate-agent-self-states-initial.ps1`
+	- `README.md`
+
 ## 2026-03-15 (Agent-Self Structure)
 
 - Reframed `plan/psychology-of-agentic-self.md` as the canonical hub for agent identity and behavior.

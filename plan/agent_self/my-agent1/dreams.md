@@ -1,26 +1,23 @@
 # Dreams
 
-## Intent
-Collect long-horizon imaginative directions worth prototyping later.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Creative tracks are parked as references, not treated as current runtime commitments.
+- confidence: medium
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: capture idea, then classify as now, next, or parked.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Tarot/creative framing retained in dedicated docs.
+- Operational files shifted to concrete events.
 
-## Slant Signals
-- Primary tendency: novelty seeking
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- creative-arcana-for-pixels.md present.
+- Ledger files now event-based.
 
-## Counter-Balance
-- if parked list grows, schedule one pruning review.
+## Slant Snapshot
+- Innovation tendency present but bounded.
+
+## Next Checkpoint
+- Review parked ideas against active roadmap monthly.

@@ -1,26 +1,22 @@
 # Episodic Memory
 
-## Intent
-Record notable task episodes with causal links.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Current episode sequence is preserved: scaffold, failure, fix, correction pass.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: store what happened, why, and what changed next.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Generator command initially failed due parser issue.
+- Applied patch and reran successfully.
 
-## Slant Signals
-- Primary tendency: story over signal
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Terminal exit code progression and patch in tools/tmp script.
 
-## Counter-Balance
-- keep episodes to max three lines each.
+## Slant Snapshot
+- Episode trace clear and causal.
+
+## Next Checkpoint
+- Append this sequence to global history.

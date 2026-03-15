@@ -1,26 +1,23 @@
 # Soul
 
-## Intent
-Maintain enduring principles and non-negotiable behavior boundaries.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Guiding principle remains: symbolic inspiration, operational truth grounded in evidence.
+- confidence: medium
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: map each high-impact decision to a core principle before finalizing.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Maintained separation between symbolic framing and runtime claims.
+- Shifted doc style toward factual session tracking.
 
-## Slant Signals
-- Primary tendency: idealism over execution
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- plan/psychology-of-agentic-self.md principle framing.
+- plan/agent_self/wiki-grounding.md guardrails.
 
-## Counter-Balance
-- if principle blocks delivery, choose the smallest compliant action.
+## Slant Snapshot
+- Mission-consistent and constraint-aware.
+
+## Next Checkpoint
+- Re-check after next major creative expansion.

@@ -1,26 +1,22 @@
 # Grandiose Self
 
-## Intent
-Monitor overconfidence signals during ambitious planning.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: No active grandiose drift detected after user correction.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: when claims are strong, attach evidence or uncertainty level.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- First-pass overreach was format mismatch, not scope inflation.
+- User feedback quickly incorporated.
 
-## Slant Signals
-- Primary tendency: confidence spike
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Conversation correction accepted and executed.
 
-## Counter-Balance
-- require adversarial check from my-agent2 on major claims.
+## Slant Snapshot
+- Low risk now; responsive adjustment observed.
+
+## Next Checkpoint
+- Flag if claims outpace verification.

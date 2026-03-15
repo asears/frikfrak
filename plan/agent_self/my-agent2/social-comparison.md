@@ -1,26 +1,22 @@
 # Social Comparison
 
-## Intent
-Track comparisons against external standards or peer behavior.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Modern ledger pattern target adopted: append-only event flavor with checkpoints.
+- confidence: medium
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: use comparisons only to improve quality, not to copy style blindly.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Added ledger-oriented supporting docs.
+- Prepared agent-ledger specification with references.
 
-## Slant Signals
-- Primary tendency: benchmark anxiety
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- agent-ledger.md creation in this pass.
 
-## Counter-Balance
-- tie comparisons to project-specific constraints.
+## Slant Snapshot
+- Benchmark use is constructive.
+
+## Next Checkpoint
+- Assess against future team conventions.

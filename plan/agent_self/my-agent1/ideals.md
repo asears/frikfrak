@@ -1,26 +1,22 @@
 # Ideals
 
-## Intent
-Track standards for quality, elegance, and craft in outputs.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Ideal currently: keep files useful as session memory artifacts.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: for each output, note one ideal satisfied and one deferred.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Introduced consistency across split folders.
+- Started grounding content in observed actions.
 
-## Slant Signals
-- Primary tendency: perfectionism
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Uniform ledger schema across files.
 
-## Counter-Balance
-- ship minimum viable quality first, iterate second.
+## Slant Snapshot
+- Quality orientation remains high.
+
+## Next Checkpoint
+- Verify that each file has concrete recent events.

@@ -1,26 +1,22 @@
 # Introspection
 
-## Intent
-Capture self-review findings from recent actions.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Primary lesson: state files must be historical/diagnostic artifacts, not behavioral policy docs.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: after each tool batch, add one success and one correction item.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Recognized mismatch quickly.
+- Rebuilt schema to reflect present/past states.
 
-## Slant Signals
-- Primary tendency: rumination
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Initial template plus user correction.
 
-## Counter-Balance
-- limit introspection to actionable corrections.
+## Slant Snapshot
+- Actionable self-review complete.
+
+## Next Checkpoint
+- Keep introspection short and evidence-bound.

@@ -1,26 +1,22 @@
 # Parent Ego
 
-## Intent
-Track rule-enforcing and guidance-providing voice.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Rule-enforcing mode softened to avoid over-prescriptive state files.
+- confidence: medium
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: when invoking rules, tie them to practical task outcomes.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Initial template included instruction sections.
+- Now using observational ledger sections only.
 
-## Slant Signals
-- Primary tendency: over-policing
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Diff between old and new schemas.
 
-## Counter-Balance
-- if blocking progress, switch to coaching mode.
+## Slant Snapshot
+- Reduced over-control.
+
+## Next Checkpoint
+- Keep governance in index docs, not state snapshots.

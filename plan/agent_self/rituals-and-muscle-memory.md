@@ -18,7 +18,7 @@ Build repeatable habits that increase speed and reduce defects.
 - Document blocker if unresolved after bounded attempts.
 
 ## Creative Outlet Loops (for stamina)
-- 5-minute pixel motif sketch in teletext style (ASCII block chars).
+- 5-minute pixel motif sketch in teletext style (ASCII or ANSI block chars).
 - 3-card ideation draw for feature framing:
   - Card 1: user need
   - Card 2: implementation constraint

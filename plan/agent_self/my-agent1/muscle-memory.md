@@ -1,26 +1,22 @@
 # Muscle Memory
 
-## Intent
-Document repeatable procedural habits for faster execution.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Established repeatable pattern: scaffold fast, validate, then normalize to user intent.
+- confidence: medium
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: convert repeated successful action sequences into short routines.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Used deterministic script generation for large file sets.
+- Added supporting index and audits for maintainability.
 
-## Slant Signals
-- Primary tendency: habit lock-in
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Script-based file creation in plan/scripts.
 
-## Counter-Balance
-- re-evaluate routines when environment changes.
+## Slant Snapshot
+- Useful habit formed; monitor over-automation risk.
+
+## Next Checkpoint
+- Confirm pattern still fits on smaller tasks.

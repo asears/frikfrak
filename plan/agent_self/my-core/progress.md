@@ -1,26 +1,23 @@
 # Progress
 
-## Intent
-Track checklist-level completion against current plan goals.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Agent-self split scaffold exists and is being normalized into ledger snapshots.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: mark completed/in-progress/not-started with one concrete evidence line.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Created my-core/my-agent1/my-agent2 state groups.
+- Added state-index/wiki-grounding/slant-audit supporting docs.
 
-## Slant Signals
-- Primary tendency: completion bias
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- plan/agent_self/state-index.md exists.
+- New files present in all three state folders.
 
-## Counter-Balance
-- if boxes move without evidence, revert status to in-progress.
+## Slant Snapshot
+- Forward progress preserved during correction.
+
+## Next Checkpoint
+- Mark completion once progress/history updates are appended.

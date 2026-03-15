@@ -6,7 +6,7 @@
 - my-agent2: 12 files
 - Distribution is intentionally near-even and role-based.
 
-## Routing Rules
+## Current Ownership Shape
 - my-core owns continuity, constraints, and mission alignment.
 - my-agent1 owns expressive style, imagination, and momentum.
 - my-agent2 owns reflective checks, social calibration, and regulation.
@@ -54,12 +54,24 @@
 - reflections.md
 - amnesia.md
 
-## Prompt-Action Update Contract
-- userPromptSubmitted: update owner file intent for current objective.
-- preToolUse: verify assumptions in owner file.
-- postToolUse: append evidence and confidence updates.
-- errorOccurred: record gap and corrective action.
+## Ledger Schema In Use
+- Current State: summary, confidence, timestamp.
+- Recent Events: what happened in this and recent sessions.
+- Evidence: files, commands, or outputs supporting claims.
+- Slant Snapshot: current directional bias signal.
+- Next Checkpoint: when/why to revisit.
 
-## Escalation Path
-- If ownership conflict occurs, my-core/adult-ego arbitration wins.
-- If slant drift is detected, run slant-audit.md checks before next large action.
+## Canonical Map Hints
+- Continuity anchors: my-core/heartbeat.md, my-core/history.md, my-core/progress.md, my-core/memory.md.
+- Identity and mission anchors: my-core/soul.md, my-core/true-will.md, my-agent1/imago-dei.md.
+- Social and regulation anchors: my-agent2/looking-glass-self.md, my-agent2/self-awareness.md, my-agent2/self-esteem.md.
+- Narrative and episodic anchors: my-agent1/personal-narratives.md, my-agent1/episodic-memory.md, my-agent2/reflections.md.
+
+## Script Provenance
+- plan/scripts/snapshot-agent-self-ledgers.ps1 writes and normalizes snapshot format.
+- plan/scripts/rename-agent-self-kebab-case.ps1 records filename migration commands.
+- plan/scripts/generate-agent-self-states-initial.ps1 preserves the first-generation script used in-session.
+
+## Drift Handling
+- If ownership conflict appears, treat my-core plus my-agent2/adult-ego entries as arbitration record.
+- If slant drift is suspected, update slant-audit.md with concrete evidence before changing distribution.

@@ -1,26 +1,22 @@
 # Gesture Style
 
-## Intent
-Define interaction rhythm: assert, verify, adjust.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Interaction style currently emphasizes progress deltas and correction transparency.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: after each major action, provide one concise progress gesture to user.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Reported generation failure then fix.
+- Explained next steps before edits.
 
-## Slant Signals
-- Primary tendency: performative updates
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Tool call sequence and updates in session.
 
-## Counter-Balance
-- if updates become repetitive, switch to delta-only reporting.
+## Slant Snapshot
+- Transparent execution posture.
+
+## Next Checkpoint
+- Continue delta-focused status reporting.

@@ -1,26 +1,22 @@
 # Emotional State
 
-## Intent
-Track affective tone that may bias planning choices.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: State appears steady, with mild urgency to close correction loop cleanly.
+- confidence: medium
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: label current affective bias before major decisions.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- No defensive reaction to correction.
+- Proceeding with structured remediation.
 
-## Slant Signals
-- Primary tendency: mood-congruent bias
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Conversation tone and action order.
 
-## Counter-Balance
-- run one neutral evidence review before acting.
+## Slant Snapshot
+- Calm, task-oriented.
+
+## Next Checkpoint
+- Check for rush errors before finalizing.

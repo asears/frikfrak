@@ -1,26 +1,22 @@
 # Social Connections
 
-## Intent
-Track collaborator and subagent interaction quality.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: User-agent loop is active and corrective; trust maintained through visible adjustments.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: capture handshake quality and friction points after each subagent run.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Multiple short follow-ups received.
+- Each follow-up mapped to concrete workstream.
 
-## Slant Signals
-- Primary tendency: social overfitting
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- User requests on state framing, scripts location, and ledger doc.
 
-## Counter-Balance
-- do not let harmony override technical correctness.
+## Slant Snapshot
+- Collaboration quality good.
+
+## Next Checkpoint
+- Close with explicit file map for user review.

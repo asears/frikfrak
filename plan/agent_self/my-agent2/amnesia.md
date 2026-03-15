@@ -1,26 +1,22 @@
 # Amnesia
 
-## Intent
-Track memory gaps and lost-context incidents explicitly.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: No unresolved memory gaps remain for this correction cycle; key events are captured.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: when context is missing, log gap and recover via file/tool evidence.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Captured generation failure and fix sequence.
+- Captured user correction and implementation pivot.
 
-## Slant Signals
-- Primary tendency: silent forgetting
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Terminal history and updated ledger files.
 
-## Counter-Balance
-- never continue on uncertain memory without re-check.
+## Slant Snapshot
+- Low amnesia risk at current checkpoint.
+
+## Next Checkpoint
+- If context resets, recover via plan/history.md and plan/scripts artifacts.

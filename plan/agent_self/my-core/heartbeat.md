@@ -1,26 +1,23 @@
 # Heartbeat
 
-## Intent
-Track liveness and cadence of planning updates for all agents.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Active this session; major restructuring of agent state files completed.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: refresh heartbeat whenever a meaningful planning step is completed.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Created split state directories under plan/agent_self.
+- Generated initial state files and then corrected format from prescriptive to descriptive.
 
-## Slant Signals
-- Primary tendency: stability and continuity
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Terminal command: tools/tmp/generate-agent-self-states.ps1 executed successfully.
+- Directory evidence: plan/agent_self/my-core contains 11 files.
 
-## Counter-Balance
-- if cadence is stale, trigger a forced sync with progress and history.
+## Slant Snapshot
+- Stable cadence, brief generation misstep corrected quickly.
+
+## Next Checkpoint
+- Update after next structural migration or command batch.

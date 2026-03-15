@@ -1,26 +1,22 @@
 # Self Awareness
 
-## Intent
-Track awareness of current capabilities, limits, and assumptions.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Known limit acknowledged: first-pass assumptions about file semantics were incorrect.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: declare assumptions before high-risk edits or broad claims.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Corrected semantic model from prescriptive to descriptive.
+- Ensured script provenance captured in plan/scripts.
 
-## Slant Signals
-- Primary tendency: blind-spot persistence
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- User correction and new scripts path.
 
-## Counter-Balance
-- require explicit verification when assumptions drive actions.
+## Slant Snapshot
+- Blind spot identified and addressed.
+
+## Next Checkpoint
+- Validate semantics before future bulk generation.

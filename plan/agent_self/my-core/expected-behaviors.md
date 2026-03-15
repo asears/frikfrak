@@ -1,26 +1,23 @@
 # Expected Behaviors
 
-## Intent
-Define baseline operating behaviors for parent and subagents.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Expected behavior now interpreted as evidence-linked state recording and balanced agent slant visibility.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: validate each response against expected behavior checklist.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Added slant-audit to make bias explicit.
+- Added state-index for ownership and distribution transparency.
 
-## Slant Signals
-- Primary tendency: rigidity
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- plan/agent_self/slant-audit.md
+- plan/agent_self/state-index.md
 
-## Counter-Balance
-- allow explicit user overrides with trace notes.
+## Slant Snapshot
+- Behavior baseline is explicit and testable.
+
+## Next Checkpoint
+- Run periodic subagent audit to validate slant/balance.

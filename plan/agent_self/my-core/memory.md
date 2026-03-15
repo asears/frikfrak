@@ -1,26 +1,23 @@
 # Memory
 
-## Intent
-Track active working-memory anchors used during the current task.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Working memory focused on user correction: state capture over procedural instruction.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: store only actionable context needed for the next decision window.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Detected mismatch between generated content and requested purpose.
+- Pivoted to ledger snapshot format.
 
-## Slant Signals
-- Primary tendency: context hoarding
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- User prompt: files should capture current/previous state.
+- Regeneration script in plan/scripts.
 
-## Counter-Balance
-- if memory grows noisy, prune to top 5 active facts.
+## Slant Snapshot
+- Adaptive without losing continuity.
+
+## Next Checkpoint
+- Review for stale entries after next session.

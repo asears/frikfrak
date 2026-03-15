@@ -1,26 +1,22 @@
 # Tone Style
 
-## Intent
-Control language register for clarity and character consistency.
-
 ## Owner
 - my-agent1
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Tone shifted from doctrinal to factual and audit-friendly.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: adapt tone to task criticality while staying concise and direct.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Removed imperative-heavy phrasing.
+- Added state summary + evidence pattern.
 
-## Slant Signals
-- Primary tendency: flair over clarity
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Current content schema in this file set.
 
-## Counter-Balance
-- if ambiguity appears, rewrite in plain operational language.
+## Slant Snapshot
+- Clear and restrained.
+
+## Next Checkpoint
+- Keep concise while preserving detail.

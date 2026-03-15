@@ -49,6 +49,10 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Add reusable future-prompt templates for subagent workflows
 - [x] Add `future-card-game-extension.md` as separate avenue (Pokemon/Magic/One Piece-inspired interaction framing)
 - [x] Add root `.justfile` with common repo commands (Node, Rust/WASM, hooks, plan helpers, optional Python env)
+- [x] Split state surfaces into `plan/agent_self/my-core`, `my-agent1`, and `my-agent2` with near-even file distribution
+- [x] Convert split files from prescriptive templates into snapshot ledgers (current/past state + evidence)
+- [x] Capture PowerShell plan-provenance scripts in `plan/scripts/`
+- [x] Add `plan/agent_self/agent-ledger.md` with modern ledger-pattern references and local linkage
 
 ## Notes
 - Local hook endpoint target: `http://localhost:4321/api/hooks/claude-code`
@@ -78,3 +82,8 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - Tarot/cartomancy concepts are tracked as symbolic design prompts for pixel/teletext UI exploration, not as factual runtime logic.
 - Card-game style extension direction is parked as a separate future track in `plan/agent_self/future-card-game-extension.md`.
 - Added `.justfile` at repo root to simplify recurring commands across Node, Rust/WASM, and workspace helpers.
+- Correction applied: split state files now record what is currently true and what previously occurred, rather than prescribing what agents should do.
+- Added `plan/scripts/snapshot-agent-self-ledgers.ps1` to normalize state files into ledger snapshots.
+- Added `plan/scripts/rename-agent-self-kebab-case.ps1` and `plan/scripts/generate-agent-self-states-initial.ps1` for script provenance capture.
+- Added `plan/scripts/README.md` script manifest and usage notes.
+- Added `plan/agent_self/agent-ledger.md` to formalize the append-oriented state tracking approach.

@@ -23,3 +23,8 @@
 
 ## Decision Rule
 - If two or more drift checks fail, pause and run Adult Ego arbitration in my-agent2/adult-ego.md, then update my-core/progress.md.
+
+## Escalation Timing
+- Arbitration owner: my-agent2/adult-ego.
+- Timebox: resolve or reclassify within 2 checkpoint cycles.
+- If unresolved after timebox: append blocker note in my-core/progress.md and my-core/history.md.

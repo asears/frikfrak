@@ -1,26 +1,23 @@
 # True Will
 
-## Intent
-Keep actions aligned to mission-level intent over impulse.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Immediate mission is to maintain a truthful, inspectable ledger of agent work in plan docs.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: before major branching, restate mission in one line and choose aligned path.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Scaffold completed.
+- Correction underway to ensure descriptive state fidelity.
 
-## Slant Signals
-- Primary tendency: teleological overreach
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Files present in plan/agent_self/*
+- Script captured under plan/scripts.
 
-## Counter-Balance
-- if mission language gets abstract, anchor to immediate deliverable.
+## Slant Snapshot
+- Goal-directed with minimal drift.
+
+## Next Checkpoint
+- Finalize by updating progress/history and linking agent-ledger.md.

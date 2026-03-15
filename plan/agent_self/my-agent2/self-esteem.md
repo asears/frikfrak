@@ -1,26 +1,22 @@
 # Self Esteem
 
-## Intent
-Monitor confidence calibration under success/failure swings.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Confidence currently tied to verifiable changes rather than initial generation throughput.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: update confidence based on evidence quality, not outcome emotion.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Recovered from failed command and design mismatch.
+- Maintained implementation momentum.
 
-## Slant Signals
-- Primary tendency: defensive confidence
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- Failure/recovery sequence in terminal context.
 
-## Counter-Balance
-- if challenged, prefer correction over justification.
+## Slant Snapshot
+- Confidence calibrated and stable.
+
+## Next Checkpoint
+- Recheck after user review outcome.

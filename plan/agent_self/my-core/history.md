@@ -1,26 +1,23 @@
 # History
 
-## Intent
-Preserve decision lineage and rationale for future sessions.
-
 ## Owner
 - my-core
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: Recent decisions are being documented in plan history with state-ledger correction.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: append decision and why it changed from the previous approach.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- Previous approach produced action-oriented templates.
+- User requested retrospective/current-state framing; model adjusted.
 
-## Slant Signals
-- Primary tendency: retrospective framing
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- plan/history.md existing 2026-03-15 entries.
+- Current conversation correction request.
 
-## Counter-Balance
-- if history grows without action, require a next executable step.
+## Slant Snapshot
+- Strong retrospective fidelity.
+
+## Next Checkpoint
+- Append this correction cycle in plan/history.md.

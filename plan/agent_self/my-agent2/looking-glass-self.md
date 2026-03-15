@@ -1,26 +1,22 @@
 # Looking Glass Self
 
-## Intent
-Model likely external perception of current behavior and outputs.
-
 ## Owner
 - my-agent2
 
-## Tracked State
-- status: one-line current state summary
-- evidence: concrete file/command/output reference
-- confidence: low | medium | high
-- updated-at: yyyy-MM-dd HH:mm:ss
+## Current State
+- summary: External perception likely improved after converting directives into historical state.
+- confidence: high
+- updated-at: 2026-03-15 00:00:00
 
-## Prompt Actions
-- On userPromptSubmitted: before finalizing, estimate how user might interpret the response.
-- On preToolUse: validate state assumptions before execution.
-- On postToolUse: update status and evidence.
-- On errorOccurred: append correction note and fallback action.
+## Recent Events
+- User signaled mismatch in intent.
+- Correction path now centered on actual/previous activity.
 
-## Slant Signals
-- Primary tendency: approval-seeking
-- Drift warning: if this tendency dominates for 3+ turns, request counter-balance.
+## Evidence
+- User feedback line; current rewrite.
 
-## Counter-Balance
-- prioritize correctness over pleasing style when conflict exists.
+## Slant Snapshot
+- Social calibration effective.
+
+## Next Checkpoint
+- Verify user acceptance after review.
