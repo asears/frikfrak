@@ -4,20 +4,22 @@
 - my-core
 
 ## Current State
-- summary: Guiding principle remains: symbolic inspiration, operational truth grounded in evidence.
-- confidence: medium
-- updated-at: 2026-03-15 00:00:00
+- summary: The repo's operating spirit is now clearer: playful pixel presentation in service of observable agent work, bounded by constraints strong enough to keep future iterations legible.
+- confidence: high
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Maintained separation between symbolic framing and runtime claims.
-- Shifted doc style toward factual session tracking.
+- The extension's future possibilities were translated into a smaller set of product options.
+- Deterministic documents were added so creative energy does not outpace operational truth.
+- Symbolic inspiration remains valid, but only after scope is frozen.
 
 ## Evidence
-- plan/psychology-of-agentic-self.md principle framing.
-- plan/agent_self/wiki-grounding.md guardrails.
+- plan/soul.md
+- plan/blueprints/product-scope-options.md
+- plan/agent_self/wiki-grounding.md
 
 ## Slant Snapshot
-- Mission-consistent and constraint-aware.
+- Mission feels more coherent, not less imaginative.
 
 ## Next Checkpoint
-- Re-check after next major creative expansion.
+- Reassess after the first operator-console slice ships under the new constraints.

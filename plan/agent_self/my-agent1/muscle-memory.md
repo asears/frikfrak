@@ -4,19 +4,20 @@
 - my-agent1
 
 ## Current State
-- summary: Established repeatable pattern: scaffold fast, validate, then normalize to user intent.
-- confidence: medium
-- updated-at: 2026-03-15 00:00:00
+- summary: The preferred repeatable pattern is now: classify workload, constrain slice, create or consult deterministic docs, update implementation or plans, then refresh ledgers.
+- confidence: high
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Used deterministic script generation for large file sets.
-- Added supporting index and audits for maintainability.
+- Added explicit playbooks and runbooks instead of relying on implicit habits.
+- Strengthened the repo's reusable sequence for broad exploratory asks.
 
 ## Evidence
-- Script-based file creation in plan/scripts.
+- plan/playbooks/deterministic-delivery-playbook.md
+- plan/runbooks/session-governance-runbook.md
 
 ## Slant Snapshot
-- Useful habit formed; monitor over-automation risk.
+- Habit loop is maturing from reactive to deliberate.
 
 ## Next Checkpoint
-- Confirm pattern still fits on smaller tasks.
+- See whether the next code-facing task actually follows the full sequence without skipping the constraint step.

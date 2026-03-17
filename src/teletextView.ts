@@ -4,6 +4,7 @@
  *  - WebGL CRT scanline + phosphor-glow post-process
  *  - Screen 1: live metrics (CPU, memory, VS Code diagnostics, agent status)
  *  - Screen 2: Wikipedia "Current events" summary
+ *  - Screen 3: NPR latest news RSS summary
  *  - Date/time header, agents ticker footer
  *  - Left/right arrow key screen switching
  *  - AST index of open workspace files (saved to plan/ast-index.json)
@@ -47,6 +48,23 @@ export interface AgentStatus {
   taskSummary: string;
 }
 
+export interface WikiEventLink {
+  title: string;
+  url: string;
+}
+
+export interface WikiEvent {
+  text: string;
+  links: WikiEventLink[];
+}
+
+export interface NprFeedItem {
+  title: string;
+  summary: string;
+  url: string;
+  published: string;
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function getNonce(): string {
@@ -56,6 +74,82 @@ function getNonce(): string {
     nonce += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return nonce;
+}
+
+function decodeHtmlEntities(input: string): string {
+  return input
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec: string) => String.fromCharCode(parseInt(dec, 10)));
+}
+
+function stripHtmlTags(input: string): string {
+  return decodeHtmlEntities(
+    input
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
+}
+
+function extractTagValue(xml: string, tagName: string): string {
+  const re = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)<\\/${tagName}>`, 'i');
+  const m = re.exec(xml);
+  if (!m?.[1]) {
+    return '';
+  }
+  return m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
+}
+
+function fetchTextUrl(urlText: string, maxRedirects = 4): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const url = new URL(urlText);
+    const transport = url.protocol === 'http:' ? http : https;
+
+    const req = transport.request(
+      {
+        protocol: url.protocol,
+        hostname: url.hostname,
+        port: url.port || undefined,
+        path: `${url.pathname}${url.search}`,
+        method: 'GET',
+        headers: {
+          'User-Agent': 'FrikfrakVSCodeExtension/0.0.1 (teletext feed reader)',
+          Accept: 'application/json, application/xml, text/xml, text/html;q=0.9, */*;q=0.8',
+        },
+      },
+      (res) => {
+        const statusCode = res.statusCode ?? 0;
+        const location = res.headers.location;
+
+        if (statusCode >= 300 && statusCode < 400 && location && maxRedirects > 0) {
+          const redirected = new URL(location, url).toString();
+          resolve(fetchTextUrl(redirected, maxRedirects - 1));
+          return;
+        }
+
+        if (statusCode >= 400) {
+          reject(new Error(`HTTP ${statusCode} for ${urlText}`));
+          return;
+        }
+
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      },
+    );
+
+    req.on('error', reject);
+    req.setTimeout(12000, () => req.destroy(new Error(`Timeout fetching ${urlText}`)));
+    req.end();
+  });
 }
 
 /** Categorise VS Code diagnostics by severity label. */
@@ -137,39 +231,373 @@ async function buildAstIndex(planFolder: string): Promise<AstEntry[]> {
   return entries;
 }
 
-/** Fetch Wikipedia Portal:Current_events page and extract a plain-text summary. Fetches via https. */
-function fetchWikipediaCurrentEvents(): Promise<string> {
-  return new Promise((resolve) => {
-    const options = {
-      hostname: 'en.wikipedia.org',
-      path: '/api/rest_v1/page/summary/Portal:Current_events',
-      method: 'GET',
-      headers: {
-        'User-Agent': 'FrikfrakVSCodeExtension/0.0.1 (educational; vscode-extension)',
-        Accept: 'application/json',
-      },
+/**
+ * Parse raw wikitext from Portal:Current_events into structured event entries.
+ * Handles multiple Wikipedia date-header formats:
+ *   == March 15 ==   === March 15, 2026 ===   ==2026 March 15==
+ * Falls back to parsing ALL bullet lines when no section headers are found.
+ */
+function parseCurrentEventsWikitext(wikitext: string): WikiEvent[] {
+  const events: WikiEvent[] = [];
+  const lines = wikitext.split('\n');
+  let inLatestSection = false;
+  let foundSection = false;
+
+  // Months pattern for detecting date section headings
+  const MONTH_NAMES =
+    'January|February|March|April|May|June|July|August|September|October|November|December';
+  const dateSectionRe = new RegExp(
+    `^={2,3}\\s*(?:\\d{1,2}\\s+)?(?:${MONTH_NAMES})(?:\\s+\\d{1,2})?(?:[,\\s]+\\d{4})?\\s*={2,3}$`,
+    'i',
+  );
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Detect date section header in any reasonable format
+    if (dateSectionRe.test(trimmed)) {
+      if (foundSection) {
+        break;
+      } // stop after first (most-recent) dated section
+      inLatestSection = true;
+      foundSection = true;
+      continue;
+    }
+
+    if (!inLatestSection) {
+      continue;
+    }
+    // Category sub-headers (;Armed conflicts) — skip
+    if (trimmed.startsWith(';')) {
+      continue;
+    }
+    // Only process bullet-point event lines
+    if (!trimmed.startsWith('*')) {
+      continue;
+    }
+
+    // Extract [[Article|Display]] links
+    const links: WikiEventLink[] = [];
+    const linkRegex = /\[\[([^\]|#]+?)(?:\|([^\]]+?))?\]\]/g;
+    let match;
+    while ((match = linkRegex.exec(trimmed)) !== null) {
+      const wikiTitle = match[1].trim();
+      if (wikiTitle && !wikiTitle.startsWith('File:') && !wikiTitle.startsWith('Category:')) {
+        links.push({
+          title: (match[2]?.trim() ?? wikiTitle).slice(0, 50),
+          url: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(wikiTitle.replace(/ /g, '_')),
+        });
+      }
+    }
+
+    // Strip wikitext markup for plain display text
+    const text = trimmed
+      .replace(/^\*+\s*/, '')
+      .replace(/\[\[([^\]|#]+)\|([^\]]+)\]\]/g, '$2')
+      .replace(/\[\[([^\]]+)\]\]/g, '$1')
+      .replace(/\{\{[^}]*?\}\}/g, '')
+      .replace(/''/g, '')
+      .replace(/'''?/g, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\[https?:\/\/[^\s\]]+\s*([^\]]*?)\]/g, '$1')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (text.length > 5 && links.length > 0) {
+      events.push({ text, links });
+      if (events.length >= 18) {
+        break;
+      }
+    }
+  }
+
+  // Fallback: if no dated section header matched, scan the entire wikitext for bullets
+  if (events.length === 0 && !foundSection) {
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('*')) {
+        continue;
+      }
+      const links: WikiEventLink[] = [];
+      const linkRegex2 = /\[\[([^\]|#]+?)(?:\|([^\]]+?))?\]\]/g;
+      let m2: RegExpExecArray | null;
+      while ((m2 = linkRegex2.exec(trimmed)) !== null) {
+        const wt = m2[1].trim();
+        if (wt && !wt.startsWith('File:') && !wt.startsWith('Category:')) {
+          links.push({
+            title: (m2[2]?.trim() ?? wt).slice(0, 50),
+            url: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(wt.replace(/ /g, '_')),
+          });
+        }
+      }
+      const text2 = trimmed
+        .replace(/^\*+\s*/, '')
+        .replace(/\[\[([^\]|#]+)\|([^\]]+)\]\]/g, '$2')
+        .replace(/\[\[([^\]]+)\]\]/g, '$1')
+        .replace(/\{\{[^}]*?\}\}/g, '')
+        .replace(/'''?/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\[https?:\/\/[^\s\]]+\s*([^\]]*?)\]/g, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (text2.length > 5 && links.length > 0) {
+        events.push({ text: text2, links });
+        if (events.length >= 18) {
+          break;
+        }
+      }
+    }
+  }
+
+  if (events.length === 0) {
+    events.push({
+      text: 'No current events parsed. Check network or Wikipedia API.',
+      links: [
+        {
+          title: 'Portal:Current_events',
+          url: 'https://en.wikipedia.org/wiki/Portal:Current_events',
+        },
+      ],
+    });
+  }
+  return events;
+}
+
+function extractCurrentEventsFromHtml(html: string): WikiEvent[] {
+  const events: WikiEvent[] = [];
+  const monthRe =
+    /(January|February|March|April|May|June|July|August|September|October|November|December)/i;
+
+  const headingRe = /<h[23][^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>[\s\S]*?<\/h[23]>/gi;
+  const headings: Array<{ index: number; rawText: string }> = [];
+  let headingMatch: RegExpExecArray | null;
+  while ((headingMatch = headingRe.exec(html)) !== null) {
+    headings.push({
+      index: headingMatch.index,
+      rawText: stripHtmlTags(headingMatch[1]),
+    });
+  }
+
+  let start = 0;
+  let end = html.length;
+  const firstDateHeadingIndex = headings.findIndex((h) => monthRe.test(h.rawText));
+  if (firstDateHeadingIndex >= 0) {
+    start = headings[firstDateHeadingIndex].index;
+    const nextDateHeading = headings
+      .slice(firstDateHeadingIndex + 1)
+      .find((h) => monthRe.test(h.rawText));
+    if (nextDateHeading) {
+      end = nextDateHeading.index;
+    }
+  }
+
+  const section = html.slice(start, end);
+  const liRe = /<li[^>]*>([\s\S]*?)<\/li>/gi;
+  let liMatch: RegExpExecArray | null;
+  while ((liMatch = liRe.exec(section)) !== null) {
+    const liHtml = liMatch[1];
+    if (/class\s*=\s*"(?:[^"\\]|\\.)*navbox/.test(liHtml)) {
+      continue;
+    }
+
+    const links: WikiEventLink[] = [];
+    const aRe = /<a[^>]+href="(\/wiki\/[^"#?]+)[^">]*"[^>]*>([\s\S]*?)<\/a>/gi;
+    let aMatch: RegExpExecArray | null;
+    while ((aMatch = aRe.exec(liHtml)) !== null) {
+      const href = aMatch[1];
+      const title = stripHtmlTags(aMatch[2]).slice(0, 50);
+      const article = href.replace('/wiki/', '').trim();
+      if (!article || article.startsWith('File:') || article.startsWith('Category:')) {
+        continue;
+      }
+      links.push({
+        title: title || decodeURIComponent(article.replace(/_/g, ' ')),
+        url: 'https://en.wikipedia.org' + href,
+      });
+      if (links.length >= 4) {
+        break;
+      }
+    }
+
+    const text = stripHtmlTags(
+      liHtml
+        .replace(/<sup[^>]*class="reference"[\s\S]*?<\/sup>/gi, ' ')
+        .replace(/\[[^\]]+\]/g, ' '),
+    );
+
+    if (text.length > 12 && links.length > 0) {
+      events.push({ text, links });
+      if (events.length >= 18) {
+        break;
+      }
+    }
+  }
+
+  return events;
+}
+
+function formatWikiCurrentEventsSubpage(date: Date): string {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  const y = date.getUTCFullYear();
+  const m = months[date.getUTCMonth()];
+  const d = date.getUTCDate();
+  return `Portal:Current_events/${y}_${m}_${d}`;
+}
+
+async function fetchWikipediaEventsFromPage(pageTitle: string): Promise<WikiEvent[]> {
+  const page = encodeURIComponent(pageTitle);
+  const jsonText = await fetchTextUrl(
+    `https://en.wikipedia.org/w/api.php?action=parse&page=${page}&prop=wikitext|text&format=json&formatversion=2&redirects=1`,
+  );
+  const json = JSON.parse(jsonText) as {
+    parse?: { text?: string; wikitext?: string };
+  };
+
+  const wikitext = json.parse?.wikitext ?? '';
+  const byWikitext = wikitext ? parseCurrentEventsWikitext(wikitext) : [];
+  if (byWikitext.length > 0 && !/No current events parsed/i.test(byWikitext[0].text)) {
+    return byWikitext;
+  }
+
+  const html = json.parse?.text ?? '';
+  const byHtml = html ? extractCurrentEventsFromHtml(html) : [];
+  return byHtml;
+}
+
+/** Fetch Wikipedia Portal:Current_events wikitext via MediaWiki Action API and parse into events. */
+async function fetchWikipediaCurrentEvents(): Promise<WikiEvent[]> {
+  try {
+    const today = new Date();
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+    const candidates = [
+      formatWikiCurrentEventsSubpage(today),
+      formatWikiCurrentEventsSubpage(yesterday),
+    ];
+
+    for (const pageTitle of candidates) {
+      try {
+        const events = await fetchWikipediaEventsFromPage(pageTitle);
+        if (events.length > 0 && !/No current events parsed/i.test(events[0].text)) {
+          return events;
+        }
+      } catch {
+        // Continue to the next candidate page.
+      }
+    }
+
+    const jsonText = await fetchTextUrl(
+      'https://en.wikipedia.org/w/api.php?action=parse&page=Portal%3ACurrent_events&prop=text|wikitext&format=json&formatversion=2&redirects=1',
+    );
+    const json = JSON.parse(jsonText) as {
+      parse?: { text?: string; wikitext?: string };
     };
 
-    const req = https.request(options, (res) => {
-      const chunks: Buffer[] = [];
-      res.on('data', (chunk: Buffer) => chunks.push(chunk));
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(Buffer.concat(chunks).toString('utf8')) as { extract?: string };
-          resolve(json.extract ?? 'No summary available.');
-        } catch {
-          resolve('Unable to parse Wikipedia response.');
-        }
-      });
-    });
+    const html = json.parse?.text ?? '';
+    const byHtml = html ? extractCurrentEventsFromHtml(html) : [];
+    if (byHtml.length > 0) {
+      return byHtml;
+    }
 
-    req.on('error', () => resolve('Network unavailable — Wikipedia summary offline.'));
-    req.setTimeout(8000, () => {
-      req.destroy();
-      resolve('Request timed out fetching Wikipedia events.');
-    });
-    req.end();
-  });
+    const wikitext = json.parse?.wikitext ?? '';
+    const byWikitext = wikitext ? parseCurrentEventsWikitext(wikitext) : [];
+    if (byWikitext.length > 0) {
+      return byWikitext;
+    }
+
+    return [
+      {
+        text: 'No current events parsed. Check Wikipedia API shape.',
+        links: [
+          {
+            title: 'Portal:Current_events',
+            url: 'https://en.wikipedia.org/wiki/Portal:Current_events',
+          },
+        ],
+      },
+    ];
+  } catch {
+    return [
+      {
+        text: 'Network unavailable while fetching Wikipedia events.',
+        links: [
+          {
+            title: 'Portal:Current_events',
+            url: 'https://en.wikipedia.org/wiki/Portal:Current_events',
+          },
+        ],
+      },
+    ];
+  }
+}
+
+async function fetchNprNewsFeed(): Promise<NprFeedItem[]> {
+  try {
+    const xml = await fetchTextUrl('https://feeds.npr.org/1004/rss.xml');
+    const items = xml.match(/<item\b[\s\S]*?<\/item>/gi) ?? [];
+    const result: NprFeedItem[] = [];
+
+    for (const itemXml of items) {
+      const title = stripHtmlTags(extractTagValue(itemXml, 'title'));
+      const description = stripHtmlTags(extractTagValue(itemXml, 'description'));
+      const link = decodeHtmlEntities(extractTagValue(itemXml, 'link'));
+      const pubDateRaw = stripHtmlTags(extractTagValue(itemXml, 'pubDate'));
+      const parsed = pubDateRaw ? new Date(pubDateRaw) : undefined;
+      const published =
+        parsed && !Number.isNaN(parsed.getTime())
+          ? parsed.toLocaleString('en-GB', { hour12: false })
+          : pubDateRaw;
+
+      if (!title || !link) {
+        continue;
+      }
+
+      result.push({
+        title: title.slice(0, 180),
+        summary: description.slice(0, 420),
+        url: link,
+        published,
+      });
+
+      if (result.length >= 20) {
+        break;
+      }
+    }
+
+    if (result.length > 0) {
+      return result;
+    }
+
+    return [
+      {
+        title: 'No NPR items parsed from feed.',
+        summary: 'The NPR RSS feed returned no readable items.',
+        url: 'https://feeds.npr.org/1004/rss.xml',
+        published: '',
+      },
+    ];
+  } catch {
+    return [
+      {
+        title: 'NPR feed unavailable',
+        summary: 'Network unavailable while fetching NPR RSS.',
+        url: 'https://feeds.npr.org/1004/rss.xml',
+        published: '',
+      },
+    ];
+  }
 }
 
 /** Simulate agent states — in a real deployment these come from actual hook events. */
@@ -265,18 +693,15 @@ async function collectMetrics(
 export function buildTeletextHtml(
   webview: vscode.Webview,
   metrics: TeletextMetrics,
-  wikiSummary: string,
+  wikiEvents: WikiEvent[],
+  nprFeed: NprFeedItem[],
   planFolder: string,
   serverPort: number,
 ): string {
   const nonce = getNonce();
 
-  // Sanitise wiki summary for embedding in JS string
-  const safeWiki = wikiSummary
-    .replace(/\\/g, '\\\\')
-    .replace(/`/g, '\\`')
-    .replace(/<[^>]+>/g, '');
-
+  const wikiEventsJson = JSON.stringify(wikiEvents);
+  const nprFeedJson = JSON.stringify(nprFeed);
   const metricsJson = JSON.stringify(metrics);
 
   return `<!DOCTYPE html>
@@ -338,7 +763,8 @@ export function buildTeletextHtml(
 
     // ── Data ──────────────────────────────────────────────────────────────────
     const METRICS = ${metricsJson};
-    const WIKI_SUMMARY = \`${safeWiki}\`;
+    const WIKI_EVENTS = ${wikiEventsJson};
+    const NPR_FEED = ${nprFeedJson};
     const vscodeApi = acquireVsCodeApi();
 
     // ── Canvas setup ─────────────────────────────────────────────────────────
@@ -385,7 +811,7 @@ export function buildTeletextHtml(
 
     // ── Screen state ─────────────────────────────────────────────────────────
     let currentScreen = 0;
-    const SCREEN_COUNT = 2;
+    const SCREEN_COUNT = 3;
 
     // Live metrics that get updated
     let liveMetrics = { ...METRICS };
@@ -574,32 +1000,51 @@ export function buildTeletextHtml(
 
       hRule(2, C.CYAN, '\u2550');
 
-      // Word-wrap wiki summary
-      const words = WIKI_SUMMARY.split(/\s+/);
       const maxCols = TT_COLS - 2;
       let row = 3;
-      let line = '';
-      for (const word of words) {
-        if (line.length + word.length + 1 > maxCols) {
-          if (row < TT_ROWS - 3) {
-            drawText(line, 1, row, C.WHITE);
-            row++;
+
+      for (const event of WIKI_EVENTS) {
+        if (row >= TT_ROWS - 4) { break; }
+
+        // Word-wrap event text
+        const words = event.text.split(/\s+/);
+        let line = '';
+        const textLines = [];
+        for (const word of words) {
+          if (line.length + word.length + 1 > maxCols) {
+            textLines.push(line);
+            line = word;
+          } else {
+            line = line ? line + ' ' + word : word;
           }
-          line = word;
-        } else {
-          line = line ? line + ' ' + word : word;
         }
-      }
-      if (line && row < TT_ROWS - 3) {
-        drawText(line, 1, row, C.WHITE);
-        row++;
+        if (line) { textLines.push(line); }
+
+        for (const tl of textLines) {
+          if (row >= TT_ROWS - 4) { break; }
+          drawText(tl, 1, row, C.WHITE);
+          row++;
+        }
+
+        // Show first article link as a compact reference
+        if (event.links.length > 0 && row < TT_ROWS - 4) {
+          const slug = decodeURIComponent(event.links[0].url.replace('https://en.wikipedia.org/wiki/', '').replace(/_/g, ' ')).slice(0, maxCols - 4);
+          drawText('\u00bb ' + slug, 1, row, C.CYAN);
+          row++;
+        }
+
+        row++; // gap between events
       }
 
       if (row < TT_ROWS - 3) {
-        hRule(row + 1, C.GREY, '\u2500');
-        drawText('SOURCE: EN.WIKIPEDIA.ORG/WIKI/PORTAL:CURRENT_EVENTS', 0, row + 2, C.GREY);
-        const dateStr = new Date().toLocaleDateString('en-GB');
-        drawText('FETCHED ' + dateStr, 0, row + 3, C.GREY);
+        hRule(row, C.GREY, '\u2500');
+        if (row + 1 < TT_ROWS - 2) {
+          drawText('SOURCE: EN.WIKIPEDIA.ORG/WIKI/PORTAL:CURRENT_EVENTS', 0, row + 1, C.GREY);
+        }
+        if (row + 2 < TT_ROWS - 1) {
+          const dateStr = new Date().toLocaleDateString('en-GB');
+          drawText('FETCHED ' + dateStr, 0, row + 2, C.GREY);
+        }
       }
     }
 
@@ -767,11 +1212,66 @@ export function buildTeletextHtml(
 
     // ── Screen navigation indicator ───────────────────────────────────────────
 
+    function screenName(idx) {
+      if (idx === 0) { return 'METRICS'; }
+      if (idx === 1) { return 'WIKIPEDIA'; }
+      return 'NPR RSS';
+    }
+
     function drawNavHint() {
-      const hint = (currentScreen === 0)
-        ? '\u25ba CURRENT EVENTS  (press \u2192)'
-        : '\u25c4 METRICS  (press \u2190)';
+      const prev = screenName((currentScreen - 1 + SCREEN_COUNT) % SCREEN_COUNT);
+      const next = screenName((currentScreen + 1) % SCREEN_COUNT);
+      const hint = '\u2190 ' + prev + '   |   ' + next + ' \u2192';
       drawText(hint, TT_COLS - hint.length - 1, TT_ROWS - 2, C.GREY);
+    }
+
+    function drawNprScreen() {
+      fillCell(0, 1, C.D_RED, TT_COLS, 1);
+      drawText('LATEST NEWS  NPR.ORG RSS', 1, 1, C.WHITE);
+
+      hRule(2, C.YELLOW, '\u2550');
+
+      const maxCols = TT_COLS - 2;
+      let row = 3;
+
+      for (const item of NPR_FEED) {
+        if (row >= TT_ROWS - 4) { break; }
+
+        drawText(item.title.slice(0, maxCols), 1, row, C.YELLOW);
+        row++;
+
+        const summaryWords = item.summary.split(/\s+/);
+        let summaryLine = '';
+        for (const word of summaryWords) {
+          if (row >= TT_ROWS - 4) { break; }
+          if (summaryLine.length + word.length + 1 > maxCols) {
+            drawText(summaryLine, 1, row, C.WHITE);
+            row++;
+            summaryLine = word;
+          } else {
+            summaryLine = summaryLine ? summaryLine + ' ' + word : word;
+          }
+          if (row >= TT_ROWS - 4) { break; }
+        }
+        if (summaryLine && row < TT_ROWS - 4) {
+          drawText(summaryLine, 1, row, C.WHITE);
+          row++;
+        }
+
+        if (item.published && row < TT_ROWS - 4) {
+          drawText('PUB ' + item.published.slice(0, maxCols - 4), 1, row, C.CYAN);
+          row++;
+        }
+
+        row++;
+      }
+
+      if (row < TT_ROWS - 2) {
+        hRule(row, C.GREY, '\u2500');
+        if (row + 1 < TT_ROWS - 1) {
+          drawText('SOURCE: FEEDS.NPR.ORG/1004/RSS.XML', 0, row + 1, C.GREY);
+        }
+      }
     }
 
     // ── Main render loop ──────────────────────────────────────────────────────
@@ -789,9 +1289,12 @@ export function buildTeletextHtml(
         drawHeader(100, 'FRIKFRAK METRICS');
         drawMetricsLabels();
         drawAstTreemap();
-      } else {
+      } else if (currentScreen === 1) {
         drawHeader(200, 'CURRENT EVENTS');
         drawWikiScreen();
+      } else {
+        drawHeader(300, 'NPR LATEST NEWS');
+        drawNprScreen();
       }
 
       // Micropixel animations
@@ -825,6 +1328,7 @@ export async function openTeletextPanel(
   hookEvents: Array<{ timestamp: string; hookType: string; payload: unknown }>,
   planFolder: string,
   wikiCachePath: string,
+  nprCachePath: string,
 ): Promise<void> {
   const panel = vscode.window.createWebviewPanel(
     'frikfrakTeletext',
@@ -836,33 +1340,79 @@ export async function openTeletextPanel(
     },
   );
 
-  // Fetch Wikipedia summary (or use cache)
-  let wikiSummary: string;
+  const isFeedPlaceholder = (text: string): boolean =>
+    /(network unavailable|unable to parse|no current events parsed|timed out|no npr items parsed|feed unavailable)/i.test(
+      text,
+    );
+
+  // Fetch Wikipedia events (network first, then cache fallback)
+  let wikiEvents: WikiEvent[];
   try {
-    if (fs.existsSync(wikiCachePath)) {
-      const cached = JSON.parse(fs.readFileSync(wikiCachePath, 'utf8')) as {
-        ts: number;
-        text: string;
-      };
-      // Use cache if less than 1 hour old
-      if (Date.now() - cached.ts < 3_600_000) {
-        wikiSummary = cached.text;
-      } else {
-        throw new Error('stale');
+    const fetched = await fetchWikipediaCurrentEvents();
+    if (fetched.length > 0 && !isFeedPlaceholder(fetched[0].text)) {
+      wikiEvents = fetched;
+      try {
+        fs.writeFileSync(
+          wikiCachePath,
+          JSON.stringify({ ts: Date.now(), events: wikiEvents }),
+          'utf8',
+        );
+      } catch {
+        // ignore cache write errors
       }
     } else {
-      throw new Error('no-cache');
+      throw new Error('wiki-fallback');
     }
   } catch {
-    wikiSummary = await fetchWikipediaCurrentEvents();
     try {
-      fs.writeFileSync(
-        wikiCachePath,
-        JSON.stringify({ ts: Date.now(), text: wikiSummary }),
-        'utf8',
-      );
+      const cached = JSON.parse(fs.readFileSync(wikiCachePath, 'utf8')) as {
+        ts: number;
+        events?: WikiEvent[];
+      };
+      if (cached.events?.length) {
+        wikiEvents = cached.events;
+      } else {
+        throw new Error('wiki-cache-empty');
+      }
     } catch {
-      // ignore
+      wikiEvents = [{ text: 'Wikipedia feed unavailable and no cache exists.', links: [] }];
+    }
+  }
+
+  // Fetch NPR feed (network first, then cache fallback)
+  let nprFeed: NprFeedItem[];
+  try {
+    const fetched = await fetchNprNewsFeed();
+    if (fetched.length > 0 && !isFeedPlaceholder(fetched[0].title)) {
+      nprFeed = fetched;
+      try {
+        fs.writeFileSync(nprCachePath, JSON.stringify({ ts: Date.now(), items: nprFeed }), 'utf8');
+      } catch {
+        // ignore cache write errors
+      }
+    } else {
+      throw new Error('npr-fallback');
+    }
+  } catch {
+    try {
+      const cached = JSON.parse(fs.readFileSync(nprCachePath, 'utf8')) as {
+        ts: number;
+        items?: NprFeedItem[];
+      };
+      if (cached.items?.length) {
+        nprFeed = cached.items;
+      } else {
+        throw new Error('npr-cache-empty');
+      }
+    } catch {
+      nprFeed = [
+        {
+          title: 'NPR feed unavailable and no cache exists.',
+          summary: '',
+          url: 'https://feeds.npr.org/1004/rss.xml',
+          published: '',
+        },
+      ];
     }
   }
 
@@ -871,7 +1421,8 @@ export async function openTeletextPanel(
   panel.webview.html = buildTeletextHtml(
     panel.webview,
     metrics,
-    wikiSummary,
+    wikiEvents,
+    nprFeed,
     planFolder,
     serverPort,
   );

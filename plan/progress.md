@@ -41,6 +41,9 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Micropixel block-char animation overlay
 - [x] AST symbol index saved to `plan/ast-index.json`
 - [x] Wikipedia summary cached to `plan/wiki-events-cache.json` (1-hour TTL)
+- [x] Refresh Wikipedia events network-first on panel open (cache fallback on failure)
+- [x] Add Screen 3: NPR teletext feed from `https://feeds.npr.org/1004/rss.xml`
+- [x] Add NPR feed cache at `plan/npr-feed-cache.json`
 - [x] Plan artefacts: `plan/heartbeat.md`, `plan/soul.md`
 
 ## Phase 3 — Agent Self Structure
@@ -53,6 +56,14 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - [x] Convert split files from prescriptive templates into snapshot ledgers (current/past state + evidence)
 - [x] Capture PowerShell plan-provenance scripts in `plan/scripts/`
 - [x] Add `plan/agent_self/agent-ledger.md` with modern ledger-pattern references and local linkage
+
+## Phase 4 — Deterministic Workloads
+- [x] Create blueprints for workload architecture, product scope options, and pixel UI surfaces
+- [x] Create playbooks for deterministic delivery, scope shaping, and dream review
+- [x] Create runbooks for session governance, teletext feed operations, and extension smoke tests
+- [x] Refresh top-level plan and agent-self docs to point to deterministic artifacts
+- [x] Refresh split state ledgers across my-core, my-agent1, and my-agent2 around constrained future scope
+- [x] Add deterministic scripts to recreate workload docs and emit stable prompt-log timestamps
 
 ## Notes
 - Local hook endpoint target: `http://localhost:4321/api/hooks/claude-code`
@@ -75,7 +86,8 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - **Teletext command** (`Test Frikfrak Teletext`) added in `teletextView.ts` — 40×25 block-char teletext layout rendered on a 2D canvas with a WebGL CRT post-process layer (scanlines, barrel-distortion, phosphor glow).
 - Screen 1: live CPU/memory, VS Code diagnostics by severity, agent simulation rows, AST tree-map.
 - Screen 2: Wikipedia Portal:Current_events plain-text summary (cached to `plan/wiki-events-cache.json`).
-- Left/right arrow keys switch screens. Date/time live in header. Footer is a scrolling hook-events ticker.
+- Screen 3: NPR latest news feed summary from `https://feeds.npr.org/1004/rss.xml` (cached to `plan/npr-feed-cache.json`).
+- Left/right arrow keys switch screens (metrics, Wikipedia, NPR). Date/time live in header. Footer is a scrolling hook-events ticker.
 - AST index saved to `plan/ast-index.json` on every open of the Teletext panel.
 - Plan artefacts: `plan/heartbeat.md`, `plan/soul.md` added alongside existing `history.md`/`progress.md`.
 - `plan/agent_self/` now contains concise operational docs for multi-agent behavior, state, and prompt reuse.
@@ -87,3 +99,7 @@ Port core Miniverse functionality into the Frikfrak VS Code extension.
 - Added `plan/scripts/rename-agent-self-kebab-case.ps1` and `plan/scripts/generate-agent-self-states-initial.ps1` for script provenance capture.
 - Added `plan/scripts/README.md` script manifest and usage notes.
 - Added `plan/agent_self/agent-ledger.md` to formalize the append-oriented state tracking approach.
+- Added `plan/blueprints/`, `plan/playbooks/`, and `plan/runbooks/` as the deterministic operations layer for future sessions.
+- Current recommendation: treat Frikfrak primarily as a pixel-based agent operator console, with workspace insights as support and feed pages as bounded sidecars.
+- Future work should select one workload label per cycle: `operator-console`, `workspace-insights`, or `feed-observer`.
+- Added `plan/scripts/sync-deterministic-workloads.ps1` and `plan/scripts/get-plan-timestamp.ps1` so the deterministic layer and prompt-log naming do not depend on ad hoc terminal commands.

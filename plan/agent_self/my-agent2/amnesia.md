@@ -4,19 +4,21 @@
 - my-agent2
 
 ## Current State
-- summary: No unresolved memory gaps remain for this correction cycle; key events are captured.
+- summary: Memory risk is lower because the repo now has explicit decision artifacts for direction-setting, not only historical ledgers.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Captured generation failure and fix sequence.
-- Captured user correction and implementation pivot.
+- Added blueprints, playbooks, and runbooks to complement plan history and split ledgers.
+- Reduced the chance that future sessions will rediscover the same scope questions from scratch.
 
 ## Evidence
-- Terminal history and updated ledger files.
+- plan/blueprints/
+- plan/playbooks/
+- plan/runbooks/
 
 ## Slant Snapshot
-- Low amnesia risk at current checkpoint.
+- Retrieval paths are more layered and durable.
 
 ## Next Checkpoint
-- If context resets, recover via plan/history.md and plan/scripts artifacts.
+- If context resets, recover first via deterministic docs, then via history and split ledgers.

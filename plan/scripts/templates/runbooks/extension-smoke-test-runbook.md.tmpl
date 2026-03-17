@@ -1,0 +1,24 @@
+# Extension Smoke Test Runbook
+
+## Purpose
+Provide a consistent manual verification path for Frikfrak UI work.
+
+## Baseline Checks
+1. Run `$CompileCommand`.
+2. Launch the Extension Development Host.
+3. Open `Test Frikfrak` and confirm the world scene renders.
+4. Open `Test Frikfrak Teletext` and confirm:
+- header time renders
+- arrow navigation works
+- metrics page renders
+- feed pages render or fall back cleanly
+- ticker remains alive
+
+## If Hooks Are In Scope
+- verify the local core server is running
+- verify hook events appear in the `Frikfrak Hooks` output channel
+- verify visible telemetry updates in the UI
+
+## If Docs Only Changed
+- skip runtime unless the docs changed the declared operating model for implementation work
+- still ensure plan and agent-self files agree

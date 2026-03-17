@@ -15,11 +15,17 @@ Maintain predictable behavior under changing requests, tools, and partial failur
 ## Transition Rules
 - `idle -> sensing`: on new request.
 - `sensing -> planning`: once requirements are concrete.
-- `planning -> acting`: when plan covers all user asks.
+- `planning -> acting`: when plan covers all user asks and the primary workload is selected.
 - `acting -> validating`: after each significant batch.
 - `validating -> reporting`: if checks pass or known blockers are documented.
 - `validating -> recovering`: if checks fail.
 - `recovering -> acting`: after targeted fix.
+
+## Determinism Gate
+Before `planning -> acting`, answer these three questions:
+- Which workload is active?
+- Which blueprint/playbook/runbook governs this task?
+- What is explicitly out of scope for this cycle?
 
 ## Heartbeat Protocol
 - Update `plan/heartbeat.md` at session start or major milestone.

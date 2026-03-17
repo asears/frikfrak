@@ -11,6 +11,7 @@
 - Require path-level evidence for claims.
 - Merge results only after consistency checks.
 - Do not treat subagent output as truth without quick verification.
+- For broad repo-shaping tasks, require subagents to classify recommendations as `promote now`, `park later`, or `reject for current scope`.
 
 ## Claude-Style Good Patterns
 - Strong decomposition for ambiguous tasks.
@@ -27,3 +28,4 @@
 - No clear done-definition.
 - No validation command requested.
 - Overly broad edits across unrelated folders.
+- Asking multiple subagents to explore different futures without first freezing a single active workload.

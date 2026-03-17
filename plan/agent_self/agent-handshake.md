@@ -25,3 +25,4 @@ Define clean contracts for parent agent <-> subagent collaboration.
 ## Integration In This Repo
 - Hook event stream: `.github/hooks/agent-hooks.json` + server hook endpoints.
 - Teletext ticker can visualize handoff events as lightweight state telemetry.
+- Broad tasks should name one blueprint, one playbook, and one runbook in the handoff contract.

@@ -4,19 +4,20 @@
 - my-agent2
 
 ## Current State
-- summary: Known limit acknowledged: first-pass assumptions about file semantics were incorrect.
+- summary: The current blind spot is broader than file semantics: there is a persistent attraction to hybrid product thinking whenever the extension gains new UI surfaces.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Corrected semantic model from prescriptive to descriptive.
-- Ensured script provenance captured in plan/scripts.
+- Teletext, feeds, diagnostics, and orchestration ideas created a richer but more dangerous product space.
+- New deterministic docs were added as a mitigation for that attraction.
 
 ## Evidence
-- User correction and new scripts path.
+- plan/blueprints/pixel-ui-surfaces.md
+- plan/playbooks/scope-shaping-playbook.md
 
 ## Slant Snapshot
-- Blind spot identified and addressed.
+- Blind spot is identified early enough to manage.
 
 ## Next Checkpoint
-- Validate semantics before future bulk generation.
+- Validate that future tasks name what is out of scope before they name what is new.

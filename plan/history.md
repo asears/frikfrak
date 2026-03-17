@@ -1,5 +1,22 @@
 # History
 
+## 2026-03-17 (Deterministic Workloads + Structured Ops Docs)
+
+- Created `plan/blueprints/` with architecture, scope-option, and UI-surface documents to bound future product direction.
+- Created `plan/playbooks/` to force workload selection, scope shaping, and dream review before broad exploratory work.
+- Created `plan/runbooks/` to standardize session governance, teletext operations, and extension smoke testing.
+- Added `plan/scripts/sync-deterministic-workloads.ps1` to recreate the deterministic workload docs and `plan/scripts/get-plan-timestamp.ps1` to avoid flaky terminal timestamp capture.
+- Refreshed top-level agent-self docs so they point at deterministic artifacts instead of only symbolic or reflective guidance.
+- Refreshed split state ledgers across my-core, my-agent1, and my-agent2 to emphasize constrained scope, repeatable workflows, and bounded dreaming.
+
+## 2026-03-16 (Teletext Feed Reliability + NPR Page)
+
+- Updated teletext Wikipedia loading to use network-first fetch on panel open, then fallback to cache when online fetch fails.
+- Switched Wikipedia parsing to prioritize date-stamped Current Events subpages, with portal HTML/wikitext fallback for reliability.
+- Added teletext Screen 3 for NPR latest feed (`https://feeds.npr.org/1004/rss.xml`) with title/summary/published timestamp rendering.
+- Extended left/right navigation from 2 pages to 3 pages: Metrics, Wikipedia, NPR.
+- Added NPR cache file support at `plan/npr-feed-cache.json`.
+
 ## 2026-03-15 (Ledger Correction + Script Provenance)
 
 - Corrected `plan/agent_self/my-core`, `my-agent1`, and `my-agent2` files from prescriptive templates to descriptive snapshot-ledger records.

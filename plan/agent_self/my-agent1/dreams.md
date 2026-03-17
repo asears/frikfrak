@@ -4,20 +4,28 @@
 - my-agent1
 
 ## Current State
-- summary: Creative tracks are parked as references, not treated as current runtime commitments.
-- confidence: medium
-- updated-at: 2026-03-15 00:00:00
+- summary: Dream energy is active again, but it is now organized into bounded candidates instead of free-floating future sprawl.
+- confidence: high
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Tarot/creative framing retained in dedicated docs.
-- Operational files shifted to concrete events.
+- Added concrete dream candidates that fit the repo's current surfaces.
+- Routed dream promotion through explicit review and scope-shaping docs.
+- Shifted from "dream everything" to "dream, classify, constrain, then decide".
 
 ## Evidence
-- creative-arcana-for-pixels.md present.
-- Ledger files now event-based.
+- plan/playbooks/dream-review-playbook.md
+- plan/blueprints/product-scope-options.md
+
+## Additional Dreams
+- Dream 1: a teletext "operator watch" page showing live agent phases, failures, and recoveries.
+- Dream 2: desk monitors in the Cozy Startup world acting as agent-specific status kiosks.
+- Dream 3: a bounded workspace-insight page showing enabled extensions, active tasks, and current repo signals.
+- Dream 4: a sidecar reading page for Hackernoon or Hacker News only when it helps observe agent runs.
+- Dream 5: a replayable orchestration timeline rendered as pixel scenes rather than plain logs.
 
 ## Slant Snapshot
-- Innovation tendency present but bounded.
+- Imagination is strong, but now accepts gates and parking lots.
 
 ## Next Checkpoint
-- Review parked ideas against active roadmap monthly.
+- Promote at most one dream into active scope after a formal review against the new workload model.

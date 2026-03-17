@@ -5,6 +5,7 @@ Build repeatable habits that increase speed and reduce defects.
 
 ## Opening Ritual (2 minutes)
 - Read `AGENTS.md` and current `plan/progress.md`.
+- Read the relevant blueprint and playbook if the task changes product direction or workload shape.
 - Identify one primary objective and one validation command.
 - Confirm target files before editing.
 
@@ -29,3 +30,4 @@ Build repeatable habits that increase speed and reduce defects.
 - Drill A: run compile, parse failures, patch once.
 - Drill B: update progress + history in one coherent pass.
 - Drill C: produce one reusable prompt template per solved issue.
+- Drill D: classify the task into one workload before implementation.

@@ -146,6 +146,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const planFolder = path.join(context.extensionUri.fsPath, 'plan');
   const wikiCachePath = path.join(planFolder, 'wiki-events-cache.json');
+  const nprCachePath = path.join(planFolder, 'npr-feed-cache.json');
 
   const testTeletextCommand = vscode.commands.registerCommand(
     'frikfrak.testFrikfrakTeletext',
@@ -157,6 +158,7 @@ export async function activate(context: vscode.ExtensionContext) {
         hookEventsSnapshot,
         planFolder,
         wikiCachePath,
+        nprCachePath,
       );
     },
   );

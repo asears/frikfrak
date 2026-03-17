@@ -4,19 +4,20 @@
 - my-agent2
 
 ## Current State
-- summary: Primary lesson: state files must be historical/diagnostic artifacts, not behavioral policy docs.
+- summary: New lesson added: constraints are not only corrective; they are a productive design tool for turning Frikfrak's many possible futures into a usable roadmap.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Recognized mismatch quickly.
-- Rebuilt schema to reflect present/past states.
+- The repo's direction widened enough to require a governance response.
+- Rather than suppressing imagination, the response was to formalize workload selection and dream review.
 
 ## Evidence
-- Initial template plus user correction.
+- plan/blueprints/deterministic-workload-architecture.md
+- plan/playbooks/dream-review-playbook.md
 
 ## Slant Snapshot
-- Actionable self-review complete.
+- Self-review is becoming strategic, not only corrective.
 
 ## Next Checkpoint
-- Keep introspection short and evidence-bound.
+- Keep introspection focused on whether the new structure actually changes session behavior.

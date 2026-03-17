@@ -4,20 +4,21 @@
 - my-core
 
 ## Current State
-- summary: Recent decisions are being documented in plan history with state-ledger correction.
+- summary: The repo history now includes a second-order planning pass: not just features shipped, but how future work should be selected and constrained.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Previous approach produced action-oriented templates.
-- User requested retrospective/current-state framing; model adjusted.
+- Teletext and feed work exposed a need for more deterministic workload shaping.
+- New operational docs were added to avoid future hybrid-scope drift.
+- Split ledgers are being refreshed so history and governance point at the same artifacts.
 
 ## Evidence
-- plan/history.md existing 2026-03-15 entries.
-- Current conversation correction request.
+- plan/history.md includes a 2026-03-17 deterministic-workloads entry.
+- plan/blueprints, plan/playbooks, and plan/runbooks now exist.
 
 ## Slant Snapshot
-- Strong retrospective fidelity.
+- History is becoming more operational and less purely narrative.
 
 ## Next Checkpoint
-- Append this correction cycle in plan/history.md.
+- Append the first implementation cycle that actively follows the new workload-selection rules.

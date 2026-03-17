@@ -4,20 +4,21 @@
 - my-core
 
 ## Current State
-- summary: Current separation: user directives drive state updates; internal modeling serves tracking only.
+- summary: The user still owns direction; agent-self artifacts should help narrow and discipline work, not create parallel product ambitions of their own.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Detected over-prescriptive internal voice in first pass.
-- Reframed files around what happened and what is currently true.
+- The repo direction broadened conceptually toward orchestration UI, insights, and feeds.
+- A deterministic layer was added so internal agent thought stays advisory and constraint-oriented.
+- Dreams are now explicitly routed through review and promotion rules.
 
 ## Evidence
-- Original template text in generated files.
-- Current request thread and corrected script.
+- plan/blueprints/product-scope-options.md
+- plan/playbooks/dream-review-playbook.md
 
 ## Slant Snapshot
-- External-task alignment restored.
+- Better separation between imagination, governance, and user intent.
 
 ## Next Checkpoint
-- Confirm after one additional user cycle.
+- Ensure any future dream promoted into implementation is traceable to an explicit user-accepted slice.

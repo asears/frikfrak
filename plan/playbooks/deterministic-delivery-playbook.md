@@ -1,0 +1,36 @@
+# Deterministic Delivery Playbook
+
+## Intent
+Turn ambiguous requests into bounded, verifiable Frikfrak work.
+
+## Steps
+1. Read AGENTS.md, plan/progress.md, and the relevant blueprint.
+2. Label the request with one workload:
+- operator-console
+- workspace-insights
+- feed-observer
+3. Freeze one smallest shippable slice.
+4. Write acceptance criteria before editing.
+5. Execute minimal changes.
+6. Run the smallest relevant validation.
+7. Update plan/history.md, plan/progress.md, and the affected state ledgers.
+
+## Acceptance Template
+- User-visible outcome:
+- Files that should change:
+- Validation method:
+- Explicit non-goals:
+
+## Stop Conditions
+Stop expanding scope when:
+- a second workload becomes necessary
+- the result needs a new data source not already justified
+- validation is no longer obvious
+
+## Repo Hooks
+- Build validation: 
+npm run compile
+- Extension entry: src/extension.ts
+- Teletext UI: src/teletextView.ts
+- History/progress: plan/history.md, plan/progress.md
+

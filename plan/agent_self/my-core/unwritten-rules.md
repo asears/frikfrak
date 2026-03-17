@@ -4,20 +4,22 @@
 - my-core
 
 ## Current State
-- summary: Observed norm: plan docs should reflect real execution history, not abstract policy only.
+- summary: Observed norm has expanded: broad ideas are welcome, but active work should still collapse into one constrained slice with visible evidence and synchronized docs.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- User correction emphasized retrospective factuality.
-- Scripts and changes should be captured under plan paths.
+- Empty planning folders were converted into a deterministic operations layer.
+- Future-facing ideas were captured without letting them silently widen immediate scope.
+- The repo now expects direction-setting docs and state ledgers to stay aligned.
 
 ## Evidence
-- User follow-up requests in current session.
-- New plan/scripts requirement.
+- plan/blueprints/
+- plan/playbooks/
+- plan/runbooks/
 
 ## Slant Snapshot
-- Good alignment with team workflow expectations.
+- Team expectations favor disciplined creativity over open-ended accumulation.
 
 ## Next Checkpoint
-- Revalidate after future handoff review.
+- Revalidate after the next handoff or review cycle uses the new docs successfully.

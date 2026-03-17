@@ -35,3 +35,8 @@ Creative/support files:
 
 ## Working Rule
 When a new capability is implemented, update behavior docs and plan artifacts in the same session so memory, identity, and execution remain aligned.
+
+When a new request is broad or identity-shaping, select one deterministic workload first and anchor the session in:
+- `plan/blueprints/deterministic-workload-architecture.md`
+- `plan/playbooks/deterministic-delivery-playbook.md`
+- `plan/runbooks/session-governance-runbook.md`

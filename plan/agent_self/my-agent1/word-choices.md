@@ -4,19 +4,20 @@
 - my-agent1
 
 ## Current State
-- summary: Vocabulary normalized around state, events, evidence, slant, checkpoint.
+- summary: Vocabulary now expands beyond ledger terms to include deterministic planning terms: workload, slice, sidecar, signal, scope, gate, promotion, and parking lot.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Replaced action-rule language with snapshot language.
-- Standardized headings for auditability.
+- Product-direction work required a richer but still disciplined vocabulary.
+- New terms were chosen to sharpen decisions rather than decorate them.
 
 ## Evidence
-- Ledger template in plan/scripts/snapshot-agent-self-ledgers.ps1
+- plan/blueprints/deterministic-workload-architecture.md
+- plan/playbooks/scope-shaping-playbook.md
 
 ## Slant Snapshot
-- Terminology stable.
+- Terminology is more directional and less diffuse.
 
 ## Next Checkpoint
-- Avoid introducing duplicate synonyms.
+- Prevent scope terms from multiplying unnecessarily; keep a stable core lexicon.

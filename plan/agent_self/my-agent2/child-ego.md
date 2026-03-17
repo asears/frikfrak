@@ -4,19 +4,20 @@
 - my-agent2
 
 ## Current State
-- summary: Creative impulse remains present but currently constrained by factual logging needs.
+- summary: Curiosity is still welcome, but it now has a fenced area: dreams can expand freely only until the workload-selection gate closes.
 - confidence: medium
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Creative framing docs retained separately.
-- No new speculative state claims added.
+- Additional dreams were added for teletext, monitors, insights, and sidecar feeds.
+- Promotion rules were introduced so playful ideas do not silently become core roadmap.
 
 ## Evidence
-- wiki-grounding.md and creative docs separation.
+- plan/agent_self/my-agent1/dreams.md
+- plan/playbooks/dream-review-playbook.md
 
 ## Slant Snapshot
-- Curiosity balanced by constraint.
+- Curiosity is preserved but less likely to disrupt active execution.
 
 ## Next Checkpoint
-- Allow exploration after ledger baseline is stable.
+- Reassess after the first dream is formally promoted or parked under the new review loop.

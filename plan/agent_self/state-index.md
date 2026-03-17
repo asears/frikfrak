@@ -66,6 +66,7 @@
 - Identity and mission anchors: my-core/soul.md, my-core/true-will.md, my-agent1/imago-dei.md.
 - Social and regulation anchors: my-agent2/looking-glass-self.md, my-agent2/self-awareness.md, my-agent2/self-esteem.md.
 - Narrative and episodic anchors: my-agent1/personal-narratives.md, my-agent1/episodic-memory.md, my-agent2/reflections.md.
+- Deterministic shaping anchors: ../blueprints/, ../playbooks/, ../runbooks/.
 
 ## Script Provenance
 - plan/scripts/snapshot-agent-self-ledgers.ps1 writes and normalizes snapshot format.
@@ -75,3 +76,4 @@
 ## Drift Handling
 - If ownership conflict appears, treat my-core plus my-agent2/adult-ego entries as arbitration record.
 - If slant drift is suspected, update slant-audit.md with concrete evidence before changing distribution.
+- If scope drift is suspected, apply `../playbooks/scope-shaping-playbook.md` before changing implementation targets.

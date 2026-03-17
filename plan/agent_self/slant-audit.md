@@ -9,6 +9,7 @@
 - my-agent1 risk: overreach, novelty bias, confidence spikes.
 - my-agent2 risk: over-correction, hesitation, over-interpretation of social signal.
 - my-core risk: procedural drag, reduced creative throughput.
+- shared risk: trying to build operator console, workspace kiosk, and feed portal simultaneously.
 
 ## Counterweights
 - For my-agent1 drift: require my-agent2 challenge note before major directional changes.
@@ -20,6 +21,7 @@
 - Is social framing overriding technical correctness?
 - Is rule adherence blocking necessary progress?
 - Is novelty replacing requirement coverage?
+- Is more than one workload active without an explicit phase split?
 
 ## Decision Rule
 - If two or more drift checks fail, pause and run Adult Ego arbitration in my-agent2/adult-ego.md, then update my-core/progress.md.

@@ -26,3 +26,10 @@ Show how the repo toolchain components coordinate.
 - Operational log: `plan/history.md`
 - Current checklist: `plan/progress.md`
 - Identity anchors: `plan/heartbeat.md`, `plan/soul.md`, this folder.
+
+## Deterministic Ops Artifacts
+- Blueprints: `plan/blueprints/`
+- Playbooks: `plan/playbooks/`
+- Runbooks: `plan/runbooks/`
+
+Use them to choose and constrain work before touching runtime code.

@@ -39,10 +39,30 @@ export class FrikfrakCoreServer extends EventEmitter {
     if (!this.workspaceFolder) {
       return defaults;
     }
-    const configPath = path.join(this.workspaceFolder, '.github', 'hooks', 'hooks-config.json');
+    // Try JSON config first; fall back to INI config (hooks-config.ini)
+    const jsonPath = path.join(this.workspaceFolder, '.github', 'hooks', 'hooks-config.json');
+    const iniPath  = path.join(this.workspaceFolder, '.github', 'hooks', 'hooks-config.ini');
     try {
-      const raw = fs.readFileSync(configPath, 'utf8');
+      const raw = fs.readFileSync(jsonPath, 'utf8');
       return { ...defaults, ...JSON.parse(raw) };
+    } catch {
+      // JSON not found — try parsing the INI file
+    }
+    try {
+      const iniRaw = fs.readFileSync(iniPath, 'utf8');
+      const cfg = { ...defaults };
+      for (const line of iniRaw.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith(';') || trimmed.startsWith('#') || trimmed.startsWith('[')) { continue; }
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx < 0) { continue; }
+        const key = trimmed.slice(0, eqIdx).trim().toLowerCase();
+        const val = trimmed.slice(eqIdx + 1).trim();
+        if (key === 'serverport') { const n = Number(val); if (!isNaN(n)) { cfg.serverPort = n; } }
+        else if (key === 'logtofile') { cfg.logToFile = ['1', 'true', 'yes', 'on'].includes(val.toLowerCase()); }
+        else if (key === 'logfolder' && val) { cfg.logFolder = val; }
+      }
+      return cfg;
     } catch {
       return defaults;
     }

@@ -4,19 +4,20 @@
 - my-agent2
 
 ## Current State
-- summary: Modern ledger pattern target adopted: append-only event flavor with checkpoints.
+- summary: The more useful benchmark is no longer only ledger systems; it is operator dashboards and constrained control-room products that succeed by being selective about what they surface.
 - confidence: medium
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Added ledger-oriented supporting docs.
-- Prepared agent-ledger specification with references.
+- Repo direction was compared internally across console, kiosk, and portal product shapes.
+- That comparison produced a recommendation instead of preserving false equivalence.
 
 ## Evidence
-- agent-ledger.md creation in this pass.
+- plan/blueprints/product-scope-options.md
+- plan/blueprints/pixel-ui-surfaces.md
 
 ## Slant Snapshot
-- Benchmark use is constructive.
+- Comparison is being used to sharpen identity, not to imitate indiscriminately.
 
 ## Next Checkpoint
-- Assess against future team conventions.
+- Assess whether future work keeps favoring a differentiated operator-console identity.

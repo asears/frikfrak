@@ -1,0 +1,51 @@
+# Pixel UI Surfaces
+
+## Purpose
+Map information types to concrete presentation surfaces inside Frikfrak.
+
+## Surface 1: Cozy Startup World
+Best for:
+- playful embodied status cues
+- room-scale metaphors
+- desk monitors, props, avatars, and signal props
+
+Good signals:
+- problems count
+- agent presence
+- current task label
+- lightweight hook activity
+
+## Surface 2: Teletext
+Best for:
+- dense information pages
+- lists, feeds, scoreboards, and diagnostics
+- deterministic page-based navigation
+
+Good signals:
+- orchestration states
+- diagnostics by category
+- AST/file summaries
+- external feeds with cache fallback
+
+## Surface 3: Output Channels / Logs
+Best for:
+- raw append-only traces
+- debugging hook payloads
+- postmortem evidence
+
+Good signals:
+- exact hook payloads
+- error details
+- session append logs
+
+## Surface Selection Rules
+- Use teletext for structured read-only monitoring.
+- Use the world scene for tangible, spatial, or playful status indicators.
+- Use output channels for raw truth that should not be stylized.
+- Never ask one surface to do all three jobs.
+
+## Future Extension Rule
+Before adding a new surface, document:
+- what signal it owns
+- what signal it should not own
+- how it validates against an existing raw source

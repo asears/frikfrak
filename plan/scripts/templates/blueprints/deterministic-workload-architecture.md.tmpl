@@ -1,0 +1,64 @@
+# Deterministic Workload Architecture
+
+## Purpose
+Define a repeatable operating model for Frikfrak so future agent work is constrained, inspectable, and easier to validate.
+
+## Current Repo Reality
+- The extension already has two strong presentation surfaces: `Test Frikfrak` and `Test Frikfrak Teletext`.
+- Runtime telemetry already exists through `FrikfrakCoreServer`, hook events, diagnostics counts, AST indexing, and teletext feeds.
+- The repo already stores plan, history, heartbeat, prompt logs, and agent-self ledgers.
+
+## Recommended Workload Model
+Each session should select exactly one primary workload:
+
+1. `$OperatorWorkload`
+- Goal: surface agent orchestration state inside the extension.
+- Canonical signals: hook events, diagnostics, active editor, AST index, problems count, task status.
+- Best UI surface: teletext dashboard or desk-monitor overlays.
+
+2. `$WorkspaceWorkload`
+- Goal: visualize VS Code configuration, extensions, commands, and repo health.
+- Canonical signals: diagnostics, settings snapshots, extension metadata, task status, file indexes.
+- Best UI surface: pixel kiosk, teletext pages, or world props acting as monitors.
+
+3. `$FeedWorkload`
+- Goal: provide external context while watching agent runs.
+- Canonical signals: Wikipedia current events, NPR, and optional future feeds such as Hackernoon or Hacker News.
+- Best UI surface: teletext pages with cache-backed fetchers and explicit fallback behavior.
+
+## Hard Constraints
+- One primary workload per implementation cycle.
+- One secondary workload allowed only as read-only support.
+- Every workload must define:
+  - primary surface
+  - source signals
+  - validation command or manual smoke check
+  - exact plan/history/state files to update
+- If a request spans multiple workloads, split it into phases before editing code.
+
+## Deterministic Sequence
+1. Classify the request into one primary workload.
+2. Choose the smallest shippable slice.
+3. Select one playbook.
+4. Execute one runbook.
+5. Validate.
+6. Update plan + agent-self in the same session.
+
+## Artifact Map
+- Blueprints define medium-term direction.
+- Playbooks define decision logic and shaping rules.
+- Runbooks define step-by-step execution.
+- Agent-self files record what is true now, how the system is leaning, and what should be checked next.
+
+## Acceptance Criteria For Future Work
+A task is deterministic enough when:
+- scope fits one workload label
+- success can be checked without interpretation drift
+- supporting docs point to the same next step
+- the extension exposes visible evidence of the result
+
+## Near-Term Recommendation
+Prioritize `$OperatorWorkload` first.
+- Reason: it best fits the existing hook server, ticker, diagnostics overlay, teletext pages, and AST index.
+- Secondary support track: `$FeedWorkload` as optional context pages.
+- Defer broad hybrid portal ambitions until the console slice is stable.

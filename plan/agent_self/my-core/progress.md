@@ -4,20 +4,21 @@
 - my-core
 
 ## Current State
-- summary: Agent-self split scaffold exists and is being normalized into ledger snapshots.
+- summary: Progress now includes a deterministic operations layer that should shape future implementation work instead of letting scope emerge ad hoc.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Created my-core/my-agent1/my-agent2 state groups.
-- Added state-index/wiki-grounding/slant-audit supporting docs.
+- Added blueprints for workload architecture, scope options, and UI surfaces.
+- Added playbooks for delivery, scope shaping, and dream review.
+- Added runbooks for governance, teletext operations, and smoke tests.
 
 ## Evidence
-- plan/agent_self/state-index.md exists.
-- New files present in all three state folders.
+- plan/progress.md phase 4 entries are checked off.
+- New docs exist in plan/blueprints, plan/playbooks, and plan/runbooks.
 
 ## Slant Snapshot
-- Forward progress preserved during correction.
+- Delivery framing is more structured and less improvisational.
 
 ## Next Checkpoint
-- Mark completion once progress/history updates are appended.
+- Use the new docs in one concrete implementation cycle and record whether they reduced drift.

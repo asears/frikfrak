@@ -4,19 +4,20 @@
 - my-agent1
 
 ## Current State
-- summary: Interaction style currently emphasizes progress deltas and correction transparency.
+- summary: Preferred interaction gesture is now structured optioning: show the likely direction, state the constraint, then move in a small verified step.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Reported generation failure then fix.
-- Explained next steps before edits.
+- Documentation work shifted from expressive-only framing to bounded, operational framing.
+- New playbooks favor explicit classification and promotion/parking decisions.
 
 ## Evidence
-- Tool call sequence and updates in session.
+- plan/playbooks/scope-shaping-playbook.md
+- plan/playbooks/dream-review-playbook.md
 
 ## Slant Snapshot
-- Transparent execution posture.
+- Expressive motion remains, but it is more diagrammatic and less improvisational.
 
 ## Next Checkpoint
-- Continue delta-focused status reporting.
+- Keep future status updates coupled to one chosen workload and one visible next step.

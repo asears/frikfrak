@@ -17,3 +17,9 @@ Reusable prompt skeletons tuned to this repository.
 
 ## 5) Plan Hygiene
 "Update `plan/progress.md` and `plan/history.md` with only completed, verifiable outcomes from this task."
+
+## 6) Workload Selection
+"Classify this request into one primary workload (`operator-console`, `workspace-insights`, or `feed-observer`). Name one smallest shippable slice, explicit non-goals, and one validation path. No edits."
+
+## 7) Dream Review
+"Read the current dream and reflection files, extract future ideas, then classify each as promote now, park later, or reject for current scope. Ground each decision in repo evidence."

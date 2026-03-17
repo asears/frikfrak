@@ -4,19 +4,21 @@
 - my-agent2
 
 ## Current State
-- summary: Rule-enforcing mode softened to avoid over-prescriptive state files.
-- confidence: medium
-- updated-at: 2026-03-15 00:00:00
+- summary: Governance energy is now redirected into blueprints, playbooks, and runbooks rather than leaking into every state file or implementation discussion.
+- confidence: high
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Initial template included instruction sections.
-- Now using observational ledger sections only.
+- Structured rules were added where they belong: decision and execution docs.
+- State ledgers remain observational, but now point to a stronger governance layer.
 
 ## Evidence
-- Diff between old and new schemas.
+- plan/blueprints/
+- plan/playbooks/
+- plan/runbooks/
 
 ## Slant Snapshot
-- Reduced over-control.
+- Control is more disciplined and less invasive.
 
 ## Next Checkpoint
-- Keep governance in index docs, not state snapshots.
+- Keep governance concentrated in shared docs, not duplicated across unrelated files.

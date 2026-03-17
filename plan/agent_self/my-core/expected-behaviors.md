@@ -4,20 +4,22 @@
 - my-core
 
 ## Current State
-- summary: Expected behavior now interpreted as evidence-linked state recording and balanced agent slant visibility.
+- summary: Expected behavior now includes workload classification, explicit non-goals, and use of blueprint/playbook/runbook artifacts before broad repo-shaping work.
 - confidence: high
-- updated-at: 2026-03-15 00:00:00
+- updated-at: 2026-03-17 00:00:00
 
 ## Recent Events
-- Added slant-audit to make bias explicit.
-- Added state-index for ownership and distribution transparency.
+- Added deterministic delivery and scope-shaping playbooks.
+- Clarified that dreams may inform direction but should not silently become active scope.
+- Tightened the relationship between plan updates and state-ledger refreshes.
 
 ## Evidence
-- plan/agent_self/slant-audit.md
-- plan/agent_self/state-index.md
+- plan/playbooks/deterministic-delivery-playbook.md
+- plan/playbooks/scope-shaping-playbook.md
+- plan/playbooks/dream-review-playbook.md
 
 ## Slant Snapshot
-- Behavior baseline is explicit and testable.
+- Behavior is more constrained without becoming rigid.
 
 ## Next Checkpoint
-- Run periodic subagent audit to validate slant/balance.
+- Observe whether future sessions follow the new workload gate without needing reminders.
