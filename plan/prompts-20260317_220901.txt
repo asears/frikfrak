@@ -1,0 +1,9 @@
+# Prompt Log
+
+- timestamp: 2026-03-17 22:09:01
+- source: chat
+- prompt: /dream
+
+## Notes
+- Triggered bounded dream-state refresh and ledger updates.
+- Classified ideas using the dream-review playbook (promote, park, reject).

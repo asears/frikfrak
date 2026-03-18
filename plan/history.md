@@ -1,5 +1,13 @@
 # History
 
+## 2026-03-17 (/dream Ledger Refresh)
+
+- Executed a bounded `/dream` cycle and reclassified active dream ideas into promote, park, and reject states.
+- Promoted one candidate: teletext "operator watch" page focused on hook phases, failures, and recovery markers.
+- Parked additional ideas (status kiosks, workspace insights, pixel replay timeline, anomaly lane, and deterministic replay card) until after the promoted slice is implemented.
+- Rejected sidecar news-reading expansion for now because it lacked direct orchestration signal value.
+- Updated split ledgers in `plan/agent_self/my-core`, `plan/agent_self/my-agent1`, and `plan/agent_self/my-agent2` with aligned state timestamps and evidence links.
+
 ## 2026-03-17 (Deterministic Workloads + Structured Ops Docs)
 
 - Created `plan/blueprints/` with architecture, scope-option, and UI-surface documents to bound future product direction.

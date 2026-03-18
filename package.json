@@ -27,6 +27,10 @@
       {
         "command": "frikfrak.testFrikfrakTeletext",
         "title": "Test Frikfrak Teletext"
+      },
+      {
+        "command": "frikfrak.testFrikfrakRust",
+        "title": "Test Frikfrak Rust (VHS Teletext)"
       }
     ]
   },
@@ -41,6 +45,7 @@
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "build:wasm": "cargo build --manifest-path wasm/frikfrak_wasm/Cargo.toml --target wasm32-unknown-unknown",
+    "build:wasm:teletext": "cargo build --manifest-path wasm/frikfrak_teletext/Cargo.toml --target wasm32-unknown-unknown --release",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
